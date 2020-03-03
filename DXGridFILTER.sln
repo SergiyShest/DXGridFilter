@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29721.120
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXWebApplication2", "DXGridFilter\DXWebApplication2.csproj", "{27998376-A62F-4B2D-914F-ECC69EE7FC23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{A7BABB9B-69B5-4AC6-B58A-E2B108430F0A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{27998376-A62F-4B2D-914F-ECC69EE7FC23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27998376-A62F-4B2D-914F-ECC69EE7FC23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27998376-A62F-4B2D-914F-ECC69EE7FC23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27998376-A62F-4B2D-914F-ECC69EE7FC23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7BABB9B-69B5-4AC6-B58A-E2B108430F0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7BABB9B-69B5-4AC6-B58A-E2B108430F0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7BABB9B-69B5-4AC6-B58A-E2B108430F0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7BABB9B-69B5-4AC6-B58A-E2B108430F0A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4C4BBCDB-0587-493E-8E9E-AA3E38690CA9}
+	EndGlobalSection
+EndGlobal

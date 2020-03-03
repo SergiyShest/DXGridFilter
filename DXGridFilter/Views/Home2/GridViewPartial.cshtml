@@ -1,0 +1,25 @@
+@{
+= Html.DevExpress().GridView(settings => {
+settings.Name = "GridView";
+settings.KeyFieldName = "ProductID";
+settings.CallbackRouteValues = new { Controller = "Home", Action = "GridViewPartial" };
+settings.CustomActionRouteValues = new { Controller = "Home", Action = "GridViewCustomActionPartial" };
+    settings.CustomActionRouteValues = new { Controller = "Home", Action = "G idViewCustomActionPartial" };
+    settings.Columns.Add(column =>
+
+        column.FieldName = "ProductID";
+    column.ReadOnly = true;
+    column.EditFormSettings.Visible = DefaultBoolean.False;
+});
+    settings.Columns.Add("ProductName");
+    settings.Columns.Add("UnitPrice");
+    settings.Columns.Add("UnitsOnOrder");
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowFilterRow = true;
+    settings.CustomJSPrope ties = (s, e) => e.P ope ties["cpFilte Expression"] = ((ASPxGridView)s).FilterExpression;
+    settings.DataBound = (s, e) =>
+
+        if (ViewData["filterExpression"] != null)
+        ((ASPxGridView)s).FilterExpression = ViewData["filterExpression"].ToString();
+  }
+@grid.Bind(Model).GetHtml()
