@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Tests.html" />
+    <Content Include="tests\FilterT.mosha.js" />
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -206,9 +207,7 @@
     <Compile Include="Models\PersonsList.cs" />
     <Compile Include="Models\Product.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="tests\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

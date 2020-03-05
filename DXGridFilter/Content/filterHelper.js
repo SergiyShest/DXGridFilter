@@ -32,8 +32,8 @@ class FilterItem extends BaseFilterItem {
     GetResultArrey() {
         return [this.Name, this.Condition, this.Value]
     }
-      GetString() {
-        return this.Name+this.Condition+this.Value;
+    GetString() {
+        return this.Name + this.Condition + this.Value;
     }
 }
 
@@ -79,189 +79,56 @@ class FilterGroupItem extends BaseFilterItem {
 class FilterHelper {
 
 
- static RemoveFromExpession(expression, condField)
-     {
-       var reg='(\\s*And |Or |and |or |)\\s*\\['+condField+'\\]\\s+(=|<|>|<=|>=)\\s+\\w+\\s*'
-      var res= expression.replace(new RegExp(reg,'g'), "");
-      console.log("====="+expression+"=====");
-      console.log( '1-->     |'+res+'|');
-    res = res.replace(/\(\s*(and|or|)\s*\)/ig);//removes empty brackets possibly with and|or
-    res = res.replace('undefined',"") ;//removes undefined
-    res = res.replace(/^\s*(and|or)\s*/i);//removes or|and in begin
-    res = res.replace(/\s*(and|or)\s*$/i);//removes or|and in end
-    res = res.replace('undefined',"") ;//removes undefined
-    console.log( '2- - -->     |'+res+'|');
-
+    static RemoveFromExpession(expression, condField) {
+        var reg = '(\\s*And |Or |and |or |)\\s*\\[' + condField + '\\]\\s+(=|<|>|<=|>=)\\s+\\w+\\s*'
+        var res = expression.replace(new RegExp(reg, 'g'), "");
+        console.log("=====" + expression + "=====");
+        console.log('1-->     |' + res + '|');
+        res = res.replace(/\(\s*(and|or|)\s*\)/ig); //removes empty brackets possibly with and|or
+        res = res.replace('undefined', ""); //removes undefined
+        res = FilterHelper.Normalaze(res);
+        console.log('2---->     |' + res + '|');
         return res;
-     }
-
-
-    
-    constructor() { }
-    //removes  brackets 
-    static Normalaze(filtrArr) {
-        if ('Items' in filtrArr) {
-            if (filtrArr.Items.length == 0) {
-                return null;
-            }
-             var newItems = [];
-            filtrArr.Items.forEach(item => {
-               
-                if (item != null) 
-                {
-                item =  FilterHelper.Normalaze(item)
-                 if(item!=null)
-                 {
-                     newItems.push(item);
-                 }
-                }
-            });
-            if(newItems.length==0)
-            return null;
-            if(newItems.length==1)
-            return newItems[0];
-            filtrArr.Items=newItems;
-        }
-        return filtrArr
     }
 
-    //создание объектного представления фильтра(конвертрация массива в коллекцию элементов фильтра)
-    static CreateFilterItems(filtrArr) {
-        if(!filtrArr||filtrArr=="")filtrArr=[];
-        var rezItem = null;
-        if (filtrArr != null && 'length' in filtrArr && filtrArr.length > 0) {
-            if (FilterHelper.GetName(filtrArr)) {//простое выражение 
-                rezItem = new FilterItem(filtrArr[0], filtrArr[1], filtrArr[2]);
-            }
-            else {
-                var ch1 = FilterHelper.CreateFilterItems(filtrArr[0]);
-                var condName = filtrArr[1];//имя
-                if (typeof (condName) != "string") {
-                    throw "Не корректный фильтр (не получилось прочесть имя)";
-                }
-                rezItem = new FilterGroupItem(condName);//создаю результирующее выражение
-                rezItem.Items.push(ch1);//первое выражение
-                for (var i = 1; i < filtrArr.length; i = i + 2) {
-                    if (filtrArr.length < i + 2) throw "Не корректный фильтр (длина)";
-                    if (condName !== filtrArr[i]) throw "Не корректный фильтр. В одном выражении разные операторы(" + condName + " и " + filtrArr[i];
-                    var ch2 = FilterHelper.CreateFilterItems(filtrArr[i + 1]);
-                    rezItem.Items.push(ch2);
-                }
-            }
-        }
-        return rezItem;
+
+    constructor() {
     }
 
-     static RemoveOldItems(filter, condField)
-     {
-
-        if (filter.constructor.name == 'FilterItem') {
-            if (filter.Name == condField) {
-                filter = null;
-            }
-        } else {
-            filter.Remove(condField);
-            filter = FilterHelper.Normalaze(filter);
+    static Normalaze(expression) {
+        var res = expression.replace(/^\s*(and|or)\s*/i); //removes or|and in begin expression
+        res = res.replace(/\s*(and|or)\s*$/i); //removes or|and in end expression
+        res = res.replace('undefined', "").trim(); //removes undefined and treem
+        if (res.startsWith('(') && res.endsWith(')')) {
+            res = res.substring(1, res.length - 1); //removes  brackets in begin and end
         }
-        return filter;
-     }
-     static RemoveCondition(filterArr, condField)
-     {
-       var filter = FilterHelper.CreateFilterItems(filterArr);
-       if(filter!=null)
-       {
-           filter =   FilterHelper.RemoveOldItems(filter, condField);
-       } 
-       if(filter!=null)
-       {
-           return filter.GetResultArrey();
-       }
-       return "";
-     }
+        return res;
+    }
+
     /*ссс*
-     * @param {Array<string|Array>} oldFilter стараый массив фильтров грида 
+     * @param {string} filterStr старый  фильтр  грида
      * @param {string} condField Имя поля
      * @param {Array<string>} condValues Массив значений
-     * @return {Array<string|Array>} Новый массив фильтров грида
+     * @param {string} dataType тип данных грида
+     * @return{string} новый фильтр грида
     */
-    static ApplyInCon(oldGridFilter, condField, condValues) {
-        var fi = null;
-        if (typeof oldGridFilter !== 'undefined') {
-            fi = FilterHelper.CreateFilterItems(oldGridFilter);//преобразование массива в объектный тип
-        }
-        if (fi != null) {
-            fi=FilterHelper.RemoveOldItems(fi,condField)
-            //удаление старых значений
-           
+    static ApplyInCon(filterStr, condField, condValues, dataType) {
+
+        filterStr = FilterHelper.RemoveFromExpession(filterStr, condField);
+        var filterOr = "";
+
+        for (var i = 0; i < condValues.length; i++) {
+            if (filterOr.length > 0) filterOr += ' or ';
+            filterOr += `[${condField}] = ${condValues[i]}${dataType}`;
         }
 
-        if (fi == null) {//старый фильтр пустой или стал пустым после удаления предыдущих значений
-            if (condValues.length == 1) {
-                fi = new FilterItem(condField, "=", condValues[0]);
-            } else {
-                fi = CreateOr(condField, condValues);
-            }
-        } else {
-            if (condValues.length > 0)//если есть чего добавлять
-            {
-                if (condValues.length == 1) {//если добавлять одно значение
-                    var filterItem = new FilterItem(condField, "=", condValues[0])//
-                   // if (fi.constructor.name == 'FilterItem') {//если предыдущее выражение было простым
-                        fi = CreateAnd([fi, filterItem]);
-                    // } else {
-                    //     if (fi.GroupName == 'and') {//если предыдущее выражение было групповым и имя группы 'and'
-                    //         fi.Items.push(filterItem)//добавляю новое выражение в группу
-                    //     } else {
-                    //         if (fi.GroupName == 'or') {
-                    //             fi = CreateAnd([fi, filterItem]);
-                    //         } else {
-                    //             throw "notImplimented " + fi.GroupName;
-                    //         }
-                    //     }
-                    // }
-                } else {
-                    var newOr = CreateOr(condField, condValues)
-                  //  if (fi.constructor.name == 'FilterItem') {//если предыдущее выражение было простым
-                        fi = CreateAnd([fi, newOr]);
-                    // } else
-                    //     if (fi.GroupName == 'and') {//если предыдущее выражение было групповым и имя группы 'and'
-                    //        fi = CreateAnd([fi, newOr]);
-                    //     }
-                    //     else {
-                    //         if (fi.GroupName == 'or')
-                    //         {
-                    //             fi = CreateAnd([fi, newOr]);
-                    //         }
-                    //         else
-                    //         {
-                    //              throw "notImplimented 2 ==" + fi.GroupName;
-                    //         }
-                           
-                    //     }
-                }
-            }
+        if (condValues.length > 1) {
+            filterOr = `(${filterOr})`;
         }
-        fi = FilterHelper.Normalaze(fi);
-        if (fi == null) return null;
-        return fi.GetResultArrey();
+        filterStr += ' and ' + filterOr;
 
-        function CreateOr(condFieldName, condValues) {
-            var newOr = new FilterGroupItem('or')
-            for (var i = 0; i < condValues.length; i++) {
-                var val = condValues[i];
-                var filter = new FilterItem(condFieldName, "=", val)
-                newOr.Items.push(filter)
-            }
-            return newOr;
-        }
-        function CreateAnd(items) {
-            var newfi = new FilterGroupItem('and')//создаю результирующую группу 'and'
-            for (var i = 0; i < items.length; i++) {
-                var item = items[i];
-                newfi.Items.push(item);
-            }
-            return newfi;
-        }
+        filterStr = FilterHelper.Normalaze(filterStr);
+        return filterStr;
 
     }
 
@@ -277,96 +144,38 @@ class FilterHelper {
         return null;
     }
 
-    static DeleteFields(filterArr, fieldName) {
-        var fi = FilterHelper.CreateFilterItems(filterArr);
-        if (fi.Name == fieldName) {
-            return new Array();
+
+
+    /**
+     * the input string will be divided by comma to get an array of parameters
+      @param { string} fieldName 
+      @param {string } filterText  
+      @param {Array<string| Array> } filterArr previous  dataGrid filter 
+  */
+    static GetFilterInFromText(fieldName, filterText, filterStr) {
+        if (filterText.length > 0) {
+            var valueAr = filterText.split(',');
+            filterStr = FilterHelper.ApplyInCon(filterStr, fieldName, valueAr);
+
+        } else {
+            filterStr = FilterHelper.RemoveFromExpession(filterStr, fieldName);
         }
-        fi.Remove(fieldName);
-        fi = FilterHelper.Normalaze(fi)
-        return fi.GetResultArrey();
-    }
-
-    static GetFilterContainsFromText(fieldName,filterText,filterArr){
-        if (filterText.length > 0) {
-
-       }else{
-    filterArr = FilterHelper.RemoveCondition(filterArr,fieldName)
-   }
-   return filterArr;
-    }
-
-      /**
-       * the input string will be divided by comma to get an array of parameters
-        @param { string} fieldName 
-        @param {string } filterText  
-        @param {Array<string| Array> } filterArr previous  dataGrid filter 
-    */  
-    static GetFilterInFromText(fieldName,filterText,filterArr){
-        if (filterText.length > 0) {
-        var valueAr = filterText.split(',');
-        filterArr = FilterHelper.ApplyInCon(filterArr, fieldName, valueAr);
-
-   }else{
-    filterArr = FilterHelper.RemoveCondition(filterArr,fieldName)
-   }
-   return filterArr;
+        return filterStr;
     }
     /**
         @param { string} fieldName 
         @param {Array<string> } valueAr 
         @param {Array<string| Array> } filterArr previous  dataGrid filter 
     */
-    static GetFilterFromArr(fieldName,valueAr,filterArr){
-     if (valueAr.length > 0) {
-        filterArr = FilterHelper.ApplyInCon(filterArr, fieldName, valueAr);
-     }else{
-        filterArr = FilterHelper.RemoveCondition(filterArr,fieldName)
-     }
-     return filterArr;
+    static GetFilterFromArr(fieldName, valueAr, filterArr) {
+        if (valueAr.length > 0) {
+            filterArr = FilterHelper.ApplyInCon(filterArr, fieldName, valueAr);
+        } else {
+            filterArr = FilterHelper.RemoveCondition(filterArr, fieldName)
+        }
+        return filterArr;
     }
 
 
 }
 
-class FilterElement {
-
-    get IsChecked() { return this._isChecked; }
-    set IsChecked(val) { this._isChecked = val; }   
-
-    get Caption() { return this._caption; }
-    set Caption(val) { this._caption = val; }
-
-    get DataField() { return this._dataField; }
-    set DataField(val) { this._dataField = val; }
-
-    get Value() { return this._value; }
-    set Value(val) { 
-        if(val!='')
-        {
-            this.IsChecked=false;
-        }else{
-            this.IsChecked=true;
-        }
-        this._value = val; 
-    }
-
-    constructor(column) {
-        if (column.caption) {
-            this.Caption = column.caption;
-        }
-        if (column.dataField) {
-            this.DataField = column.dataField;
-        }
-    }
-
-   setValue(filterArr){
-       array.forEach(element => {
-           
-       });
-
-       
-   }
-    
-
-}

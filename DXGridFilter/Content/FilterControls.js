@@ -19,33 +19,18 @@ function FilterField(dataGridColumn, input, checkBox, condition = '=') {
             val = this.Input.value;
            switch (this.DataType) {
               case 'number': {
-                     return FilterHelper.GetFilterInFromText(this.DataField, val, collectiveFilter)
+                     return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter)
                }       
               break;
               case 'string': { 
-                     return FilterHelper.GetFilterInFromText(this.DataField, val, collectiveFilter)
+                     return FilterHelper.GetFilterContainsFromText(this.column.dataField, val, collectiveFilter)
               }
               break;
             }
         }
-        return FilterHelper.GetFilterInFromText(this.DataField, val, collectiveFilter)
+        return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter)
     }
-    //разделение по значения фильтра по запятым
-    function filterCommaSplittedCodition(dataField, inpVal) {
-        inpVal = inpVal.replace(/\s/g, '').replace(/,+/g, ',');//remove repeated commas and spaces
-        var arr = inpVal.split(',');
-        filter = new Array();
-        if (arr.length == 1 && arr[0] == '') { } else {
-            for (f = 0, i = 0; i < arr.length; i++ , f++) {
-                filter[f] = [dataField, "=", arr[i]];
-                if (arr.length - 1 > i) {
-                    f++;
-                    filter[f] = 'or'
-                }
-            }
-        }
-        return filter;
-    }
+
     //called from OUTside 
     //change CheckBox value depending on the InputBox.value  
     function ChangeChecked() {
@@ -72,20 +57,15 @@ function FilterElements(datagrid, fe) {
     this.dataGrid = datagrid;
     this.filtElem = fe;
     this.CreateFilter = CreateFilter;
-  //  this.SetCombinedFilter = SetCombinedFilter;
-    this.ClearFilter = ClearFilter;
+    this.ClearFilter  = ClearFilter;
     this.FilterFind = FilterFind;
-  //  this.SetOldFilter = SetOldFilter;
 
     //массив элементов фильтра
     this.FilterElementsArray = new Array();
    
     //Функция создания фильтра
     function CreateFilter(columns) {
-        //  var filtElem = document.getElementById(id);
         this.filtElem.childNodes.length = 0;
-        //  var dataGridInstance = $("#grid").dxDataGrid("instance");
-       // oldGridFilter = this.dataGrid.getCombinedFilter();
 
         const table = document.createElement('table');
         this.filtElem.appendChild(table);
@@ -149,7 +129,6 @@ function FilterElements(datagrid, fe) {
         }
     }
 
-
     function ClearFilter() {
         for (i = 0; i < this.FilterElementsArray.length; i++) {
             this.FilterElementsArray[i].Input.value = "";
@@ -157,15 +136,14 @@ function FilterElements(datagrid, fe) {
         }
     }
 
-
     //Find by Filter
     function FilterFind() {
-        collectiveFilter = dataGrid.getCombinedFilter();
+        collectiveFilter = this.dataGrid.cpFilterExpression;
         for (i = 0; i < this.FilterElementsArray.length; i++) {
             collectiveFilter=   this.FilterElementsArray[i].ApplayFilter(collectiveFilter);
         }
         
-        dataGrid.option("filterValue", collectiveFilter);
+        this.dataGrid.PerformCallback({ filterExpression: collectiveFilter });;
     }
 
 }

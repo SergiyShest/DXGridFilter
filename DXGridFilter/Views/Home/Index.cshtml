@@ -1,5 +1,6 @@
 ﻿
 <script src="@Url.Content("../Content/FilterControls.js")" type="text/javascript"></script>
+<script src="@Url.Content("../Content/FilterHelper.js")" type="text/javascript"></script>
 <script type="text/javascript">
 
     var filterDiscr = [
@@ -15,10 +16,15 @@
             $('#filterStr').val(GridView.cpFilterExpression);
         lbFilters.AddItem(GridView.cpFilterExpression);
     }
-
     function OnSelectedIndexChanged(s, e) {
-        GridView.PerformCallback({ filterExpression: lbFilters.GetSelectedItem().text });
+        console.log("---");
+        GridView.PerformCallback({ filterExpression: $('#filterStr').val() });
     }
+   // function OnSelectedIndexChanged(s, e) {
+   //     GridView.PerformCallback({ filterExpression: lbFilters.GetSelectedItem().text });
+   // }
+
+
 
 </script>
 <table>
@@ -56,6 +62,7 @@
     <tr>
         <td>
             @Html.Action("GridViewPartial")
+ 
         </td>
     </tr>
 
@@ -65,5 +72,9 @@
     var filerElem = document.getElementById("filter");
     var filter = new FilterElements(GridView, filerElem);
     filter.CreateFilter(filterDiscr);
-//    });
+    function FilterFind() {
+       
+        
+        filter.FilterFind();
+    }
 </script>

@@ -17,6 +17,7 @@
     settings.Settings.ShowHeaderFilterListBoxSearchUI = true;
     settings.Settings.ShowFilterBar = GridViewStatusBarMode.Visible;
 
+
     settings.CustomJSProperties = (s, e) => e.Properties["cpFilterExpression"] = ((ASPxGridView)s).FilterExpression;
 
     settings.DataBound = (s, e) => {

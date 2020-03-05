@@ -2,9 +2,10 @@
   "name": "testgridFilter",
   "version": "0.1.0",
   "private": false,
-
-    "scripts": { "test": "jasmine" }
-
-
-
+  "scripts": {
+    "test": "jasmine"
+  },
+  "dependencies": {
+    "testcafe": "^1.8.2"
+  }
 }
