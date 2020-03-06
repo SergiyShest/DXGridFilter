@@ -1,89 +1,16 @@
-class BaseFilterItem {
-
-    get isFilterItem() { return this._name; }
-    set isFilterItem(val) { this._name = val; }
-
-    get isFilterGroupItem() { return this._namex; }
-    set isFilterGroupItem(val) { this._namex; }
-}
-
-class FilterItem extends BaseFilterItem {
-
-    get Name() { return this._Name; }
-    set Name(val) { this._Name = val; }
-
-    get Condition() { return this._Condition; }
-    set Condition(val) { this._Condition = val; }
-
-    get Value() { return this._Value; }
-    set Value(val) { this._Value = val; }
-    /**
-    * @param {string} name имя переменной
-    * @param {string} condition условие
-    * @param {string} value значение
-    */
-    constructor(name, condition, value) {
-        super();
-        this.Name = name;
-        this.Condition = condition;
-        this.Value = value;
-        this.isFilterItem = true;
-    }
-    GetResultArrey() {
-        return [this.Name, this.Condition, this.Value]
-    }
-    GetString() {
-        return this.Name + this.Condition + this.Value;
-    }
-}
-
-class FilterGroupItem extends BaseFilterItem {
-
-    get GroupName() { return this._GroupName; }
-    set GroupName(val) { this._GroupName = val; }
-
-    get Items() { return this._Items; }
-    set Items(val) { this._Items = val; }
-
-    constructor(name) {
-        super();
-        if (name.length == 0) throw "Имя не может быть пустым"
-        this.GroupName = name.toLowerCase().trim();
-        this.Items = new Array();
-    }
-    GetResultArrey() {
-        var resultArrey = new Array();
-        for (var i = 0; i < this.Items.length; i++) {
-            if (resultArrey.length > 0) {
-                resultArrey.push(this.GroupName);
-            }
-            resultArrey.push(this.Items[i].GetResultArrey());
-        }
-        return resultArrey;
-    }
-    //удаляет из  this.Items объекты с именем fieldName
-    Remove(fieldName) {
-        var resultArrey = new Array();
-        for (var i = 0; i < this.Items.length; i++) {
-            var item = this.Items[i];
-            if (item.Name == fieldName) continue;//
-            if (!item.Name) {//если нет свойтсва имя то это 
-                item.Remove(fieldName);
-            }
-            resultArrey.push(this.Items[i]);
-        }
-        this.Items = resultArrey;
-    }
-}
 
 class FilterHelper {
 
 
     static RemoveFromExpession(expression, condField) {
-        var reg = '(\\s*And |Or |and |or |)\\s*\\[' + condField + '\\]\\s+(=|<|>|<=|>=)\\s+\\w+\\s*'
+        var reg = '(\\s*And |Or |and |or |)\\s*\\[' + condField + '\\]\\s+(=|<|>|<=|>=|Like|like|LIKE)\\s+(\'%|)\\w+(%\'|)\\s*';
         var res = expression.replace(new RegExp(reg, 'g'), "");
-        console.log("=====" + expression + "=====");
+        console.log("=====" + expression + "=====" + reg);
         console.log('1-->     |' + res + '|');
+
+        var reg2 = '(\\s*And |Or |and |or |)\\s*(Contains|BeginFrom|End)\\(\\[name\\], \'\\w+\'\\)\\s*';
+         res = res.replace(new RegExp(reg2, 'g'), "");
+
         res = res.replace(/\(\s*(and|or|)\s*\)/ig); //removes empty brackets possibly with and|or
         res = res.replace('undefined', ""); //removes undefined
         res = FilterHelper.Normalaze(res);
@@ -132,19 +59,6 @@ class FilterHelper {
 
     }
 
-    /**
-        @param { Array<string | Array>} filterArr массив параметров
-    */
-    static GetName(filterArr) {
-        // var arrType = typeof filterArr;
-        if (typeof (filterArr) !== "undefined" && typeof (filterArr.length) !== "undefined")
-            if (filterArr.length == 3 && typeof filterArr[0] == 'string') {
-                return filterArr[0];
-            }
-        return null;
-    }
-
-
 
     /**
      * the input string will be divided by comma to get an array of parameters
@@ -153,6 +67,7 @@ class FilterHelper {
       @param {Array<string| Array> } filterArr previous  dataGrid filter 
   */
     static GetFilterInFromText(fieldName, filterText, filterStr) {
+
         if (filterText.length > 0) {
             var valueAr = filterText.split(',');
             filterStr = FilterHelper.ApplyInCon(filterStr, fieldName, valueAr);
@@ -163,18 +78,29 @@ class FilterHelper {
         return filterStr;
     }
     /**
-        @param { string} fieldName 
-        @param {Array<string> } valueAr 
-        @param {Array<string| Array> } filterArr previous  dataGrid filter 
-    */
-    static GetFilterFromArr(fieldName, valueAr, filterArr) {
-        if (valueAr.length > 0) {
-            filterArr = FilterHelper.ApplyInCon(filterArr, fieldName, valueAr);
-        } else {
-            filterArr = FilterHelper.RemoveCondition(filterArr, fieldName)
+     * 
+     * @param {string} filterStr
+     * @param {string} fieldName
+     * @param {string} searchedValue
+     * @param {string} compareType
+     */
+    static GetFilterContainsFromText(filterStr, fieldName,searchedValue, compareType) {
+     console.log('before remove ' + filterStr);
+        filterStr = FilterHelper.RemoveFromExpession(filterStr, fieldName);
+        console.log('after remove ' + filterStr);
+        if (searchedValue.length > 0) {
+            switch (compareType) {
+            case "Contains":
+                    filterStr += ' and Contains([' + fieldName + "], '" + searchedValue + "')";
+                break;
+                default:
+                    console.log('default ' + filterStr);
+                    filterStr += ' and [' + fieldName + "] like '%" + searchedValue + "%'";
+            }
         }
-        return filterArr;
-    }
+        console.log('result ' + filterStr);
+        return filterStr;
+   }
 
 
 }

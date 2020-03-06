@@ -17,14 +17,16 @@ function FilterField(dataGridColumn, input, checkBox, condition = '=') {
         if (checkBox.checked) {
 
             val = this.Input.value;
-           switch (this.DataType) {
-              case 'number': {
-                     return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter)
-               }       
+           switch (this.column.dataType) {
+              case 'number':
+                  {
+                      return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter);
+                  }       
               break;
-              case 'string': { 
-                     return FilterHelper.GetFilterContainsFromText(this.column.dataField, val, collectiveFilter)
-              }
+              case 'string':
+                  {
+                      return FilterHelper.GetFilterContainsFromText(collectiveFilter,this.column.dataField, val, "like");
+                  }
               break;
             }
         }
@@ -90,9 +92,10 @@ function FilterElements(datagrid, fe) {
             //create  checkbox
             checkBox = document.createElement("input");
             checkBox.setAttribute('type', 'checkbox');
-
+            checkBox.setAttribute('id', column.dataField+'Checkbox');
             //input
             input = document.createElement("input")
+            input.setAttribute('id', column.dataField+'Input');
             if (column.filterType && column.filterType == 'ComboBox') {
                 input = document.createElement("select")
                 for(var f=0; f<column.avaiableFields.length;f++){
@@ -117,6 +120,7 @@ function FilterElements(datagrid, fe) {
         findButton.setAttribute('onclick', 'FilterFind()');
         findButton.setAttribute('class', 'float-right');
         findButton.textContent = 'Найти';
+        findButton.setAttribute('id', 'findButton');
         createTableCell(row);// create 2 empty cell
         createTableCell(row);
         createTableCell(row, findButton);//put button in 3 cell

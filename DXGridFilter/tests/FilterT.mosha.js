@@ -53,6 +53,17 @@ describe("RemoveFromExpession Tests", function () {
         expect(resFilter).to.equal('[x]=5');
     });
 
+it("test remove like", function () {
+    var exp = "[U] = 10.0m And [name] Like '%20s%'";
+        var resFilter = FilterHelper.RemoveFromExpession(exp, 'name').trim();
+    expect(resFilter).to.equal('[U] = 10.0m');
+});
+
+ it("test remove contains", function () {
+     var exp = "[U] = 10.0m and Contains([name], 'x')";
+        var resFilter = FilterHelper.RemoveFromExpession(exp, 'name').trim();
+    expect(resFilter).to.equal('[U] = 10.0m');
+    });
 });
 
 describe("ApplyInCon Tests", function () {
@@ -90,4 +101,21 @@ describe("ApplyInCon Tests", function () {
         var resFilter = FilterHelper.ApplyInCon(exp, 'i',[1,2],'').trim();
         expect(resFilter).to.equal('[U] = 10.0m and ([i] = 1 or [i] = 2)');
     });
+
+});
+
+describe("GetFilterContainsFromText Tests", function () {
+
+    it("test  like", function () {
+        var exp = "[U] = 10.0m And [name] Like '%20s%'";
+        var resFilter = FilterHelper.GetFilterContainsFromText(exp, 'name','x').trim();
+        expect(resFilter).to.equal("[U] = 10.0m and name like '%x%'");
+    });
+
+    it("test Contains", function () {
+        var exp = "[U] = 10.0m And [name] Like '%20s%'";
+        var resFilter = FilterHelper.GetFilterContainsFromText(exp, 'name', 'x', 'Contains').trim();
+        expect(resFilter).to.equal("[U] = 10.0m and Contains([name], 'x')");
+    });
+
 });
