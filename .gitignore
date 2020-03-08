@@ -5,3 +5,5 @@
 /DXGridFilter/bin
 /.vs/DXGridFILTER/DesignTimeBuild/.dtbcache.v2
 *.suo
+*.mdf
+*.ldf

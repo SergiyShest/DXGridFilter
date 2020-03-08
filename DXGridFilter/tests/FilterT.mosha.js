@@ -41,6 +41,11 @@ describe("RemoveFromExpession Tests", function () {
         expect(resFilter).to.equal('');
     });
 
+    it("test date ", function () {
+        var exp = " [id] <= 20s and [Date] > '18/03/20'";
+        var resFilter = FilterHelper.RemoveFromExpession(exp, 'Date').trim();
+        expect(resFilter).to.equal('[id] <= 20s');
+    });
     it("test () ", function () {
         var exp = "([id] <= 20s or [id] >= 10s)";
         var resFilter = FilterHelper.RemoveFromExpession(exp, 'id').trim();
@@ -109,7 +114,7 @@ describe("GetFilterContainsFromText Tests", function () {
     it("test  like", function () {
         var exp = "[U] = 10.0m And [name] Like '%20s%'";
         var resFilter = FilterHelper.GetFilterContainsFromText(exp, 'name','x').trim();
-        expect(resFilter).to.equal("[U] = 10.0m and name like '%x%'");
+        expect(resFilter).to.equal("[U] = 10.0m and [name] like '%x%'");
     });
 
     it("test Contains", function () {

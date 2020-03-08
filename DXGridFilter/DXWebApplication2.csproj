@@ -143,6 +143,7 @@
     <Content Include="App_Data\Dashboards\dashboard1.xml" />
     <Content Include="App_Data\nwind.mdb" />
     <Content Include="Content\DashboardThumbnail\dashboard1.png" />
+    <Content Include="Content\DateFormat.js" />
     <Content Include="Content\FilterControls.js" />
     <Content Include="Content\filterHelper.js" />
     <Content Include="Content\Site.css" />

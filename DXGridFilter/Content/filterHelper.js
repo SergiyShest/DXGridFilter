@@ -1,10 +1,18 @@
 
-class FilterHelper {
+ class FilterHelper {
 
 
-    static RemoveFromExpession(expression, condField) {
-        var reg = '(\\s*And |Or |and |or |)\\s*\\[' + condField + '\\]\\s+(=|<|>|<=|>=|Like|like|LIKE)\\s+(\'%|)\\w+(%\'|)\\s*';
+     static RemoveFromExpession(expression, condField) {
+
+        var reg = '(\\s*And |Or |and |or |)\\s*\\[' + condField + '\\]\\s+(=|<|>|<=|>=|Like|like|LIKE)\\s+[\\w\\/-]+\\s*';//значение  без кавычек [a]=4
         var res = expression.replace(new RegExp(reg, 'g'), "");
+
+        reg = '(\\s*And |Or |and |or |)\\s*\\[' + condField + '\\]\\s+(=|<|>|<=|>=|Like|like|LIKE)\\s+\'(.*?)\'\\s*';//значение в кавычках например [a]='e dfdfg' 
+         res = res.replace(new RegExp(reg, 'g'), "");
+
+         reg = '(\\s*And |Or |and |or |)\\s*\\[' + condField + '\\]\\s+(=|<|>|<=|>=)\\s+#(.*?)#\\s*';//дата в # например [ProductDate] > #1994-12-31# 
+         res = res.replace(new RegExp(reg, 'g'), "");
+
         console.log("=====" + expression + "=====" + reg);
         console.log('1-->     |' + res + '|');
 
@@ -102,6 +110,26 @@ class FilterHelper {
         return filterStr;
    }
 
+     static GetFilterBetween(filterStr, fieldName,searchedValueFrom, searchedValueTo) {
+    
+        filterStr = FilterHelper.RemoveFromExpession(filterStr, fieldName);
+         if (searchedValueFrom.length > 0) {
+             var d = Date.parse(searchedValueFrom);
+             searchedValueFrom = dateFormat(d, "yyyy-mm-dd");
 
+                    filterStr += ' and [' + fieldName + "] >= #" + searchedValueFrom + "#";
+         }
+         if (searchedValueTo.length > 0) {
+
+             var d = Date.parse(searchedValueTo);
+             searchedValueTo = dateFormat(d, "yyyy-mm-dd");
+                    filterStr += ' and [' + fieldName + "] <= #" + searchedValueTo + "#";
+         }
+         console.log('result ' + filterStr);
+         filterStr = FilterHelper.Normalaze(filterStr);
+        return filterStr;
+   }
 }
+
+//module.exports = FilterHelper;
 

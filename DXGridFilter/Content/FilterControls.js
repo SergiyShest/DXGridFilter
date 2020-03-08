@@ -1,33 +1,49 @@
 
 //объект который содержит данные о гриде
-function FilterField(dataGridColumn, input, checkBox, condition = '=') {
+function FilterField(dataGridColumn, input, input2, checkBox, condition = '=') {
     this.column = dataGridColumn;
-   // this.DataField = dataGridColumn.dataField;
-   // this.DataType = dataGridColumn.dataType;
+    // this.DataField = dataGridColumn.dataField;
+    // this.DataType = dataGridColumn.dataType;
     this.Condition = condition;
     this.Input = input;
+    this.Input2 = input2;
     this.Input.Tag = this;
+    this.Input.onchange = ValueChanged;
     this.Input.onkeyup = ValueChanged;
+    if (this.Input2 !== null)
+    {
+        this.Input2.onchange = ValueChanged;
+        this.Input2.Tag = this;
+    }
     this.CheckBox = checkBox;
     this.CheckBox.Tag = this;
     this.ApplayFilter = ApplayFilter;//function применить фильтр
     this.ChangeChecked = ChangeChecked;//function изменилась галочка
     function ApplayFilter(collectiveFilter) {
-        var val='';
+        var val = '';
         if (checkBox.checked) {
 
             val = this.Input.value;
-           switch (this.column.dataType) {
-              case 'number':
-                  {
-                      return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter);
-                  }       
-              break;
-              case 'string':
-                  {
-                      return FilterHelper.GetFilterContainsFromText(collectiveFilter,this.column.dataField, val, "like");
-                  }
-              break;
+            switch (this.column.dataType) {
+                case 'number':
+                    {
+                        return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter);
+                    }
+                    break;
+                case 'string':
+                    {
+                        return FilterHelper.GetFilterContainsFromText(collectiveFilter, this.column.dataField, val, "like");
+                    }
+                    break;
+                 case 'date':
+                    {
+                        if (this.Input2 !== null) {
+                             var val2 = this.Input2.value;
+                              return FilterHelper.GetFilterBetween(collectiveFilter, this.column.dataField, val , val2);
+                        }
+                    }
+                    break;
+
             }
         }
         return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter)
@@ -51,7 +67,6 @@ function FilterField(dataGridColumn, input, checkBox, condition = '=') {
             this.Tag.CheckBox.checked = true;
         }
     }
-
 }
 
 function FilterElements(datagrid, fe) {
@@ -59,17 +74,18 @@ function FilterElements(datagrid, fe) {
     this.dataGrid = datagrid;
     this.filtElem = fe;
     this.CreateFilter = CreateFilter;
-    this.ClearFilter  = ClearFilter;
+    this.ClearFilter = ClearFilter;
     this.FilterFind = FilterFind;
 
     //массив элементов фильтра
     this.FilterElementsArray = new Array();
-   
+
     //Функция создания фильтра
     function CreateFilter(columns) {
         this.filtElem.childNodes.length = 0;
 
         const table = document.createElement('table');
+        table.setAttribute('border', '1');
         this.filtElem.appendChild(table);
 
         for (var i = 0; i < columns.length; i++) {
@@ -81,7 +97,6 @@ function FilterElements(datagrid, fe) {
             row = document.createElement('tr');
             table.appendChild(row);
 
-
             var text = column.caption;
             if (!text) {
                 text = column.dataField;
@@ -90,27 +105,54 @@ function FilterElements(datagrid, fe) {
             textnode = document.createTextNode(text);
 
             //create  checkbox
-            checkBox = document.createElement("input");
+            var checkBox = document.createElement("input");
             checkBox.setAttribute('type', 'checkbox');
-            checkBox.setAttribute('id', column.dataField+'Checkbox');
+            checkBox.setAttribute('id', column.dataField + 'Checkbox');
             //input
-            input = document.createElement("input")
-            input.setAttribute('id', column.dataField+'Input');
-            if (column.filterType && column.filterType == 'ComboBox') {
-                input = document.createElement("select")
-                for(var f=0; f<column.avaiableFields.length;f++){
-                var option = document.createElement("option");
-                option.text = column.avaiableFields[f];
-                input.add(option);
+            var input = document.createElement("input");
+            var input2 = null;
+            input.setAttribute('id', column.dataField + 'Input');
+
+            if (column.dataType == 'date') {
+                input.setAttribute('type', 'date');
+
+                if (column.filterType == "between") {
+                    input2 = document.createElement("input");
+                    input2.setAttribute('type', 'date');
+                }
             }
 
+            if (column.filterType && column.filterType == 'ComboBox') {
+                input = document.createElement("select");
+                for (var f = 0; f < column.avaiableFields.length; f++) {
+                    var option = document.createElement("option");
+                    option.text = column.avaiableFields[f];
+                    input.add(option);
+                }
+
             }
-            field = new FilterField(column, input, checkBox);
+            field = new FilterField(column, input,input2, checkBox);
 
             this.FilterElementsArray.push(field);
             createTableCell(row, textnode);
             createTableCell(row, checkBox);
-            createTableCell(row, input);
+            //  var td=  createTableCell(row, input,"3");
+            if (input2 !== null) {
+                var div = document.createElement("div");
+                var from = document.createTextNode("от");
+
+                div.appendChild(from);
+                div.appendChild(input);
+                var to = document.createTextNode("до");
+
+                div.appendChild(to);
+                div.appendChild(input2);
+                createTableCell(row, div);
+            }
+            else {
+                input.setAttribute('style', "width: 100%");
+                createTableCell(row, input);
+            }
             //this.FilterElementsArray.push({ DataField: column.dataField, DataType: column.dataType, Input: input, Check: checkBox });
         }
         row = document.createElement('tr');
@@ -118,16 +160,25 @@ function FilterElements(datagrid, fe) {
         table.appendChild(row);
         findButton = document.createElement("button");
         findButton.setAttribute('onclick', 'FilterFind()');
-        findButton.setAttribute('class', 'float-right');
+        findButton.setAttribute('style', 'align: right;');
         findButton.textContent = 'Найти';
         findButton.setAttribute('id', 'findButton');
         createTableCell(row);// create 2 empty cell
         createTableCell(row);
-        createTableCell(row, findButton);//put button in 3 cell
+      var td=  createTableCell(row, findButton);//put button in 3 cell
+        td.setAttribute('align', "right");
+        function createTableCell(row, el, rowspan = null) {
+            var td = document.createElement("td");
 
-          function createTableCell(row, el) {
-            td = document.createElement("td");
-            if (el != null) { td.appendChild(el); }
+            if (el !== null) {
+                try {
+                    td.appendChild(el);
+                }
+                catch (err) {
+                    console.log(err);
+                }
+            }
+            if (rowspan !== null) { td.setAttribute('rowspan', rowspan); }
             row.appendChild(td);
             return td;
         }
@@ -144,9 +195,9 @@ function FilterElements(datagrid, fe) {
     function FilterFind() {
         collectiveFilter = this.dataGrid.cpFilterExpression;
         for (i = 0; i < this.FilterElementsArray.length; i++) {
-            collectiveFilter=   this.FilterElementsArray[i].ApplayFilter(collectiveFilter);
+            collectiveFilter = this.FilterElementsArray[i].ApplayFilter(collectiveFilter);
         }
-        
+
         this.dataGrid.PerformCallback({ filterExpression: collectiveFilter });;
     }
 
