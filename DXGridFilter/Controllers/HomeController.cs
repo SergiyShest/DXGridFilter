@@ -2,6 +2,7 @@
 
 namespace GridViewCustomFiltersMvc {
     public class HomeController : Controller {
+
         public ActionResult Index() {
             return View();
         }
@@ -14,5 +15,6 @@ namespace GridViewCustomFiltersMvc {
             ViewData["filterExpression"] = filterExpression;
             return PartialView("GridViewPartial", NorthwindDataProvider.GetProducts());
         }
+
     }
 }

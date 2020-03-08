@@ -1,5 +1,5 @@
 
-//объект который содержит данные о гриде
+//объект который содержит данные об одном элементе фильтра
 function FilterField(dataGridColumn, input, input2, checkBox, condition = '=') {
     this.column = dataGridColumn;
     // this.DataField = dataGridColumn.dataField;
@@ -10,15 +10,16 @@ function FilterField(dataGridColumn, input, input2, checkBox, condition = '=') {
     this.Input.Tag = this;
     this.Input.onchange = ValueChanged;
     this.Input.onkeyup = ValueChanged;
-    if (this.Input2 !== null)
-    {
+    if (this.Input2 !== null) {
         this.Input2.onchange = ValueChanged;
         this.Input2.Tag = this;
     }
     this.CheckBox = checkBox;
+    this.CheckBox.onchange = CheckedChanged;
     this.CheckBox.Tag = this;
     this.ApplayFilter = ApplayFilter;//function применить фильтр
-    this.ChangeChecked = ChangeChecked;//function изменилась галочка
+    this.ChangeChecked = ChangeChecked;//function снять галочку
+
     function ApplayFilter(collectiveFilter) {
         var val = '';
         if (checkBox.checked) {
@@ -35,27 +36,56 @@ function FilterField(dataGridColumn, input, input2, checkBox, condition = '=') {
                         return FilterHelper.GetFilterContainsFromText(collectiveFilter, this.column.dataField, val, "like");
                     }
                     break;
-                 case 'date':
+                case 'date':
                     {
                         if (this.Input2 !== null) {
-                             var val2 = this.Input2.value;
-                              return FilterHelper.GetFilterBetween(collectiveFilter, this.column.dataField, val , val2);
+                            var val2 = this.Input2.value;
+                            return FilterHelper.GetFilterBetween(collectiveFilter, this.column.dataField, val, val2);
                         }
                     }
                     break;
 
             }
         }
-        return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter)
+        return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter);
     }
 
     //called from OUTside 
     //change CheckBox value depending on the InputBox.value  
     function ChangeChecked() {
-        if (this.Input.value === "") {
-            this.CheckBox.checked = false;
+
+            filterField = this;
+
+        if (filterField.Input.value === "") {
+            filterField.CheckBox.checked = false;
+
         } else {
-            this.CheckBox.checked = true;
+            filterField.CheckBox.checked = true;
+          
+
+        }
+    }
+
+    //called from OUTside 
+    //change CheckBox value depending on the InputBox.value  
+    function CheckedChanged() {
+
+        var filterField = this.Tag;
+      
+
+        if (!filterField.CheckBox.checked) {
+
+            filterField.Input.classList.add("greyBackground");
+            if (filterField.Input2 != null) {
+                filterField.Input2.classList.add("greyBackground");
+            }
+
+        } else {
+            filterField.Input.classList.remove("greyBackground");
+            if (filterField.Input2 != null) {
+                filterField.Input2.classList.remove("greyBackground");
+            }
+
         }
     }
     //called from InputBox 
@@ -63,8 +93,16 @@ function FilterField(dataGridColumn, input, input2, checkBox, condition = '=') {
     function ValueChanged(e) {
         if (this.value === "") {
             this.Tag.CheckBox.checked = false;
+            this.Tag.Input.classList.add("greyBackground");
+            if (this.Tag.Input2 != null) {
+                this.Input2.Tag.classList.add("greyBackground");
+            }
         } else {
             this.Tag.CheckBox.checked = true;
+            this.Tag.Input.classList.remove("greyBackground");
+            if (this.Tag.Input2 != null) {
+                this.Tag.Input2.classList.remove("greyBackground");
+            }
         }
     }
 }
@@ -113,12 +151,15 @@ function FilterElements(datagrid, fe) {
             var input2 = null;
             input.setAttribute('id', column.dataField + 'Input');
 
+            input.classList.add("greyBackground");
+
             if (column.dataType == 'date') {
                 input.setAttribute('type', 'date');
 
                 if (column.filterType == "between") {
                     input2 = document.createElement("input");
                     input2.setAttribute('type', 'date');
+                    input2.classList.add("greyBackground");
                 }
             }
 
@@ -131,7 +172,7 @@ function FilterElements(datagrid, fe) {
                 }
 
             }
-            field = new FilterField(column, input,input2, checkBox);
+            field = new FilterField(column, input, input2, checkBox);
 
             this.FilterElementsArray.push(field);
             createTableCell(row, textnode);
@@ -165,7 +206,7 @@ function FilterElements(datagrid, fe) {
         findButton.setAttribute('id', 'findButton');
         createTableCell(row);// create 2 empty cell
         createTableCell(row);
-      var td=  createTableCell(row, findButton);//put button in 3 cell
+        var td = createTableCell(row, findButton);//put button in 3 cell
         td.setAttribute('align', "right");
         function createTableCell(row, el, rowspan = null) {
             var td = document.createElement("td");

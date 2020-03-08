@@ -93,9 +93,9 @@
      * @param {string} compareType
      */
     static GetFilterContainsFromText(filterStr, fieldName,searchedValue, compareType) {
-     console.log('before remove ' + filterStr);
+    
         filterStr = FilterHelper.RemoveFromExpession(filterStr, fieldName);
-        console.log('after remove ' + filterStr);
+      
         if (searchedValue.length > 0) {
             switch (compareType) {
             case "Contains":
