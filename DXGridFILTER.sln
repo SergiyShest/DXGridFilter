@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29721.120
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXWebApplication2", "DXGridFilter\DXWebApplication2.csproj", "{27998376-A62F-4B2D-914F-ECC69EE7FC23}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DXWebApplication2Tests", "DXWebApplication2Tests\DXWebApplication2Tests.csproj", "{011C4BE9-D8A2-4565-A24A-6343EA0AADE5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{27998376-A62F-4B2D-914F-ECC69EE7FC23}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27998376-A62F-4B2D-914F-ECC69EE7FC23}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27998376-A62F-4B2D-914F-ECC69EE7FC23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{011C4BE9-D8A2-4565-A24A-6343EA0AADE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{011C4BE9-D8A2-4565-A24A-6343EA0AADE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{011C4BE9-D8A2-4565-A24A-6343EA0AADE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{011C4BE9-D8A2-4565-A24A-6343EA0AADE5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

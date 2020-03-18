@@ -1,22 +1,39 @@
+@functions {
+    private void FillContextMenuItems(object sender, ASPxGridViewContextMenuEventArgs e)
+    {
+        if (e.MenuType == GridViewContextMenuType.Columns)
+        {
+           var item = new GridViewContextMenuItem("Копировать выделенные", "Copy");
+            e.Items.Add(item);
+        }
+    }
+}
 @Html.DevExpress().GridView(settings => {
     settings.Name = "GridView";
-    settings.KeyFieldName = "ProductID";
+    settings.KeyFieldName = "OrderID";
     settings.CallbackRouteValues = new { Controller = "Home", Action = "GridViewPartial" };
     settings.CustomActionRouteValues = new { Controller = "Home", Action = "GridViewCustomActionPartial" };
+ 
     settings.Columns.Add(column => {
-        column.FieldName = "ProductID";
+        column.FieldName = "OrderID";
         column.ReadOnly = true;
         column.EditFormSettings.Visible = DefaultBoolean.False;
+        settings.SettingsBehavior.AllowSelectByRowClick = true;
     });
 
-    settings.Columns.Add("ProductName");
-    settings.Columns.Add("UnitPrice");
-    settings.Columns.Add("UnitsOnOrder");
-    settings.Columns.Add("ProductDate",MVCxGridViewColumnType.DateEdit);
+    settings.SettingsContextMenu.EnableColumnMenu = DefaultBoolean.True;
+    settings.FillContextMenuItems=FillContextMenuItems;
+    settings.Columns.Add("ShipName");
+    settings.Columns.Add("CustomerID");
+    settings.Columns.Add("EmployeeID");
+    settings.Columns.Add("Freight");
+    settings.Columns.Add("OrderDate", MVCxGridViewColumnType.DateEdit);
 
+    settings.ClientSideEvents.ContextMenuItemClick = "ContextMenuItemClick";
     settings.Settings.ShowFilterRowMenuLikeItem = true;
     settings.Settings.ShowFilterRowMenu = true;
     settings.Settings.ShowFilterRow = true;
+    settings.ClientSideEvents.ContextMenuItemClick = "OnContextMenuItemClick";
     settings.Settings.ShowHeaderFilterListBoxSearchUI = true;
     settings.Settings.ShowFilterBar = GridViewStatusBarMode.Visible;
 

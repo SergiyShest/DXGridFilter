@@ -7,3 +7,4 @@
 *.suo
 *.mdf
 *.ldf
+/DXGridFilter/App_Data

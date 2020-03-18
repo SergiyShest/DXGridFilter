@@ -1,0 +1,42 @@
+@functions {
+    private void FillContextMenuItems(object sender, ASPxGridViewContextMenuEventArgs e)
+    {
+        var  item=new GridViewContextMenuItem("ttt", "eeeeeeeeeeee");
+       item.Command == GridViewContextMenuCommand.ExpandRow
+        e.Items.Add();
+    }
+}
+@Html.DevExpress().GridView(settings => {
+    settings.Name = "GridView";
+    settings.KeyFieldName = "ProductID";
+    settings.CallbackRouteValues = new { Controller = "Home", Action = "GridViewPartial" };
+    settings.CustomActionRouteValues = new { Controller = "Home", Action = "GridViewCustomActionPartial" };
+    settings.Columns.Add(column => {
+        column.FieldName = "ProductID";
+        column.ReadOnly = true;
+        column.EditFormSettings.Visible = DefaultBoolean.False;
+      settings.SettingsBehavior.AllowSelectByRowClick = true;
+    });
+    settings.SettingsContextMenu.EnableColumnMenu = DefaultBoolean.True;
+    settings.FillContextMenuItems=FillContextMenuItems;
+    settings.Columns.Add("ProductName");
+    settings.Columns.Add("UnitPrice");
+    settings.Columns.Add("UnitsOnOrder");
+    settings.Columns.Add("ProductDate",MVCxGridViewColumnType.DateEdit);
+
+    settings.ClientSideEvents.ContextMenuItemClick = "ContextMenuItemClick";
+    settings.Settings.ShowFilterRowMenuLikeItem = true;
+    settings.Settings.ShowFilterRowMenu = true;
+    settings.Settings.ShowFilterRow = true;
+    settings.Settings.ShowHeaderFilterListBoxSearchUI = true;
+    settings.Settings.ShowFilterBar = GridViewStatusBarMode.Visible;
+
+    settings.CustomJSProperties = (s, e) => e.Properties["cpFilterExpression"] = ((ASPxGridView)s).FilterExpression;
+
+    settings.DataBound = (s, e) => {
+        if (ViewData["filterExpression"] != null)
+            ((ASPxGridView)s).FilterExpression = ViewData["filterExpression"].ToString();
+    };
+
+}).Bind(Model).GetHtml()
+

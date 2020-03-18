@@ -1,31 +1,30 @@
 
- class FilterHelper {
+class FilterHelper {
 
 
-     static RemoveFromExpession(expression, condField) {
+    static RemoveFromExpession(expression, condField) {
 
         var reg = '(\\s*And |Or |and |or |)\\s*\\[' + condField + '\\]\\s+(=|<|>|<=|>=|Like|like|LIKE)\\s+[\\w\\/-]+\\s*';//значение  без кавычек [a]=4
         var res = expression.replace(new RegExp(reg, 'g'), "");
 
         reg = '(\\s*And |Or |and |or |)\\s*\\[' + condField + '\\]\\s+(=|<|>|<=|>=|Like|like|LIKE)\\s+\'(.*?)\'\\s*';//значение в кавычках например [a]='e dfdfg' 
-         res = res.replace(new RegExp(reg, 'g'), "");
+        res = res.replace(new RegExp(reg, 'g'), "");
 
-         reg = '(\\s*And |Or |and |or |)\\s*\\[' + condField + '\\]\\s+(=|<|>|<=|>=)\\s+#(.*?)#\\s*';//дата в # например [ProductDate] > #1994-12-31# 
-         res = res.replace(new RegExp(reg, 'g'), "");
+        reg = '(\\s*And |Or |and |or |)\\s*\\[' + condField + '\\]\\s+(=|<|>|<=|>=)\\s+#(.*?)#\\s*';//дата в # например [ProductDate] > #1994-12-31# 
+        res = res.replace(new RegExp(reg, 'g'), "");
 
-        console.log("=====" + expression + "=====" + reg);
-        console.log('1-->     |' + res + '|');
+        //        console.log("=====" + expression + "=====" + reg);
+        //        console.log('1-->     |' + res + '|');
 
         var reg2 = '(\\s*And |Or |and |or |)\\s*(Contains|BeginFrom|End)\\(\\[name\\], \'\\w+\'\\)\\s*';
-         res = res.replace(new RegExp(reg2, 'g'), "");
+        res = res.replace(new RegExp(reg2, 'g'), "");
 
         res = res.replace(/\(\s*(and|or|)\s*\)/ig); //removes empty brackets possibly with and|or
         res = res.replace('undefined', ""); //removes undefined
         res = FilterHelper.Normalaze(res);
-        console.log('2---->     |' + res + '|');
+        //        console.log('2---->     |' + res + '|');
         return res;
     }
-
 
     constructor() {
     }
@@ -53,6 +52,8 @@
         var filterOr = "";
 
         for (var i = 0; i < condValues.length; i++) {
+
+            if (condValues[i].length == 0) continue;
             if (filterOr.length > 0) filterOr += ' or ';
             filterOr += `[${condField}] = ${condValues[i]}${dataType}`;
         }
@@ -61,7 +62,6 @@
             filterOr = `(${filterOr})`;
         }
         filterStr += ' and ' + filterOr;
-
         filterStr = FilterHelper.Normalaze(filterStr);
         return filterStr;
 
@@ -92,15 +92,15 @@
      * @param {string} searchedValue
      * @param {string} compareType
      */
-    static GetFilterContainsFromText(filterStr, fieldName,searchedValue, compareType) {
-    
+    static GetFilterContainsFromText(filterStr, fieldName, searchedValue, compareType) {
+
         filterStr = FilterHelper.RemoveFromExpession(filterStr, fieldName);
-      
+
         if (searchedValue.length > 0) {
             switch (compareType) {
-            case "Contains":
+                case "Contains":
                     filterStr += ' and Contains([' + fieldName + "], '" + searchedValue + "')";
-                break;
+                    break;
                 default:
                     console.log('default ' + filterStr);
                     filterStr += ' and [' + fieldName + "] like '%" + searchedValue + "%'";
@@ -108,27 +108,43 @@
         }
         console.log('result ' + filterStr);
         return filterStr;
-   }
+    }
+    /**
+     * 
+     * @param {any} filterStr
+     * @param {any} fieldName
+     * @param {any} dataType
+     * @param {any} searchedValueFrom
+     * @param {any} searchedValueTo
+     */
+    static GetFilterBetween(filterStr, fieldName, dataType, searchedValueFrom, searchedValueTo) {
 
-     static GetFilterBetween(filterStr, fieldName,searchedValueFrom, searchedValueTo) {
-    
         filterStr = FilterHelper.RemoveFromExpession(filterStr, fieldName);
-         if (searchedValueFrom.length > 0) {
-             var d = Date.parse(searchedValueFrom);
-             searchedValueFrom = dateFormat(d, "yyyy-mm-dd");
 
-                    filterStr += ' and [' + fieldName + "] >= #" + searchedValueFrom + "#";
-         }
-         if (searchedValueTo.length > 0) {
+        if (dataType == "date") {
+            filterStr += addDateCondition(searchedValueFrom, ">=");
+            filterStr += addDateCondition(searchedValueTo, "<=");
+        } else {
+            filterStr += addNumberCondition(searchedValueFrom, ">=");
+            filterStr += addNumberCondition(searchedValueTo, "<=");
+        }
 
-             var d = Date.parse(searchedValueTo);
-             searchedValueTo = dateFormat(d, "yyyy-mm-dd");
-                    filterStr += ' and [' + fieldName + "] <= #" + searchedValueTo + "#";
-         }
-         console.log('result ' + filterStr);
-         filterStr = FilterHelper.Normalaze(filterStr);
+        filterStr = FilterHelper.Normalaze(filterStr);
         return filterStr;
-   }
+
+        function addDateCondition(searchedValue, condition) {
+            if (searchedValue.length > 0) {
+                var d = Date.parse(searchedValue);
+                searchedValue = dateFormat(d, "yyyy-mm-dd");
+                return ` and [${fieldName}] ${condition} #${searchedValue}#`;
+            }else return "";
+        }
+        function addNumberCondition(searchedValue, condition) {
+            if (searchedValue.length > 0) {
+                return ` and [${fieldName}] ${condition} ${searchedValue}`;
+            }else return "";
+        }
+    }
 }
 
 //module.exports = FilterHelper;

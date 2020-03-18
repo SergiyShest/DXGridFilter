@@ -1,18 +1,50 @@
-﻿  <style>
-      .greyBackground {
-          background-color: #eee; /* Цвет фона */
-      }
-  </style>
+﻿<style>
+    table.filter {
+        border: 1pt solid black;
+        border-collapse: collapse;
+        background-color: #ccc;
+    }
+    tr.border_bottom td {
+        border-bottom:1pt solid black;
+    }
+    .labelBase {
+        margin: 2px;
+    }
+    .greyBackground {
+        background-color: #eee; /* Цвет фона для неактивного котнрола */
+    }
+    .inputBase {
+        margin: 2px;
+        min-width: 170px;
+       
+    }
+</style>
 <script src="@Url.Content("../Content/FilterControls.js")" type="text/javascript"></script>
 <script src="@Url.Content("../Content/FilterHelper.js")" type="text/javascript"></script>
 <script src="@Url.Content("../Content/DateFormat.js")" type="text/javascript"></script>
 <script type="text/javascript">
 
     var filterDiscr = [
-        { dataField: "ProductID", caption: 'id', dataType: "number", filterType: "", filter: true },
-        { dataField: "ProductName", caption: 'имя', dataType: "string", filterType: "", filter: true },
-        { dataField: "UnitPrice", caption: 'цена', dataType: "number", filterType: "", filter: true },
-        { dataField: "ProductDate", caption: 'дата', dataType: "date", filterType: "between", filter: true }
+        { dataField: "OrderID", caption: 'id', dataType: "number", filterType: "", filter: true },
+        { dataField: "ShipName", caption: 'имя', dataType: "string", filterType: "", filter: true },
+        {
+            dataField: "CustomerID",
+            caption: 'CustomerID',
+            dataType: "string",
+            filterType: "combobox",
+            filter: true,
+            avaiableValues: ["VINET", "TOMSP", "HANAR", "VICTE"]
+        },
+        {
+            dataField: "CustomerID",
+            caption: 'CustomerID',
+            dataType: "string",
+            filterType: "listbox",
+            filter: true,
+            avaiableValues: ["VINET", "TOMSP", "HANAR", "VICTE"]
+        },
+        { dataField: "Freight", caption: 'цена', dataType: "number", filterType: "between", filter: true },
+        { dataField: "OrderDate", caption: 'дата', dataType: "date", filterType: "between", filter: true }
     ];
 
     function OnClick(s, e) {
@@ -27,7 +59,76 @@
         GridView.PerformCallback({ filterExpression: $('#filterStr').val() });
     }
 
+    function OnContextMenuItemClick(s, e) {
+        if (e.objectType == "header" && e.item.name == 'Copy') {
 
+
+            e.handled = true;
+            var isKeyFieldRequired = false;
+
+            var fieldName = s.GetColumn(e.elementIndex).fieldName;
+            if (fieldName == 'OrderID') {
+                isKeyFieldRequired = true;
+            }
+
+            s.GetSelectedFieldValues('OrderID', GetSelectedFieldValuesCallback);
+
+
+            function fetchJson(path, collback) {
+                try {
+                    fetch(path, { mode: 'cors' })
+                        .then(response => response.json())
+                        .then(function (json) {
+                            collback(json);
+
+                        }
+                        );
+                } catch (ex) {
+                    alert(ex);
+                }
+            }
+
+            function GetSelectedFieldValuesCallback(values) {
+
+                var res = '';
+                for (var i = 0; i < values.length; i++) {
+                    if (res.length > 0) res += ',';
+                    res += values[i];
+                }
+                if (!isKeyFieldRequired) {
+                    var resJson = [];
+                    var path = `Home/GetSelectedRowData?ids=${res}&fieldName=${fieldName}`;
+                    fetchJson(path, json => {
+                        resJson = json;
+                        res = '';
+                        for (var i1 = 0; i1 < resJson.length; i1++) {
+                            if (res.length > 0) res += ',';
+                            res += resJson[i1];
+                        }
+                        console.log(resJson);
+                        copyToClipboard(res);
+                    });
+
+
+                } else {
+
+                    copyToClipboard(res);
+                }
+                //;
+
+            }
+
+
+            function copyToClipboard(str) {
+                const el = document.createElement('textarea');
+                el.value = str;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+            }
+        }
+    }
 </script>
 <table>
     <tr>
@@ -65,7 +166,6 @@
     <tr>
         <td>
             @Html.Action("GridViewPartial")
-
         </td>
     </tr>
 
@@ -76,8 +176,8 @@
     var filter = new FilterElements(GridView, filerElem);
     filter.CreateFilter(filterDiscr);
     function FilterFind() {
-       
-        
+
+
         filter.FilterFind();
     }
 </script>
