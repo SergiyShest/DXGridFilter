@@ -2,7 +2,7 @@
 //объект который содержит данные об одном элементе фильтра
 function FilterField(dataGridColumn, input, input2, checkBox, filterFind) {
     this.column = dataGridColumn;
-    // this.DataField = dataGridColumn.dataField;
+    //  this.DataField = dataGridColumn.dataField;
     // this.DataType = dataGridColumn.dataType;
     //this.Condition = condition;
     this.Input = input;
@@ -18,10 +18,10 @@ function FilterField(dataGridColumn, input, input2, checkBox, filterFind) {
     this.CheckBox.onchange = CheckedChanged;
     this.CheckBox.Tag = this;
     this.ApplayFilter = ApplayFilter;//function применить фильтр
+    this.GetSetting = getSetting;//function получить значение фильтра
+    this.SetSetting = setSetting;//function установить значение фильтра
     this.ChangeChecked = ChangeChecked;//function снять галочку
     this.FilterFind = filterFind;//function FilterFind colls by press Enter
-
-
 
     function ApplayFilter(collectiveFilter) {
         var val = '';
@@ -86,6 +86,54 @@ function FilterField(dataGridColumn, input, input2, checkBox, filterFind) {
         return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter);
     }
 
+    function setSetting(setting) {
+
+        this.CheckBox.checked = setting.checkBox;
+        this.Input.value = setting.value;
+        if (this.Input2 !== null) {
+            this.Input2.value = setting.value2;
+        }
+
+
+        switch (this.column.filterType) {
+            case "listbox":
+                console.log(setting.value);
+                var arr = setting.value.split(',');
+                for (var i = 0; i < arr.length; i++) {
+                    for (var o = 0; o < this.Input.options.length; o++) {
+                        var option = this.Input.options[o];
+
+                        if (option.value == arr[i]) {
+                            option.selected = true;
+                        }
+                    }
+                }
+
+                break;
+        }
+    }
+
+    function getSetting() {
+
+        let val = this.Input.value;
+        let val2 = null;
+        if (this.Input2 !== null) {
+            val2 = this.Input2.value;
+        }
+        switch (this.column.filterType) {
+            case "listbox":
+                val = "";
+                for (var i = 0; i < this.Input.selectedOptions.length; i++) {
+                    if (val.length > 0) val += ',';
+                    val += this.Input.selectedOptions[i].value;
+                }
+                break;
+        }
+        return { checkBox: this.CheckBox.checked, value: val, value2: val2 };
+
+    }
+
+
     //called from OUTside 
     //change CheckBox value depending on the InputBox.value  
     function ChangeChecked() {
@@ -147,9 +195,6 @@ function FilterField(dataGridColumn, input, input2, checkBox, filterFind) {
         }
     }
 
-
-
-
 }
 
 //limits input characters to numbers and commas
@@ -174,23 +219,63 @@ function OnlyNumberAndCommas(element, e) {
 }
 
 function FilterElements(datagrid, fe) {
-
+    this.FilterElementsArray = new Array();
     this.dataGrid = datagrid;
     this.filtElem = fe;
-    this.CreateFilter = CreateFilter;
+    this.CreateFilter = createFilter;
     this.ClearFilter = ClearFilter;
     this.FilterFind = FilterFind;
+    this.ReadSettings = readSettings;
+    this.SaveSettings = saveSettings;
+
+    function saveSettings(settingName) {
+        var settings = [];
+        for (var i = 0; i < this.FilterElementsArray.length; i++) {
+            var filterItem = this.FilterElementsArray[i];
+            settings.push({ dataField: filterItem.column.dataField, value: filterItem.GetSetting() });
+
+        }
+        console.log(settings);
+        var jsn = JSON.stringify(settings);
+        console.log(jsn);
+        localStorage.setItem(settingName, jsn);
+    }
+
+    function readSettings(settingName) {
+        console.log(this.FilterElementsArray);
+
+        var jsn = localStorage.getItem(settingName, jsn);
+        try {
+            var settings = JSON.parse(jsn);
+            for (let i = 0; i < settings.length; i++) {
+                const setting = settings[i];
+                for (let it = 0; it < this.FilterElementsArray.length; it++) 
+                { 
+                    const item = this.FilterElementsArray[it];
+                   if(item.column.dataField==setting.dataField){
+                      item.SetSetting(setting.value);
+                      break;
+                   }
+                }
+            }
+
+        } catch (error) {
+            alert(error);
+        }
+
+
+    }
 
     //массив элементов фильтра
-    this.FilterElementsArray = new Array();
+
 
     //Функция создания фильтра
-    function CreateFilter(columns) {
+    function createFilter(columns) {
         this.filtElem.childNodes.length = 0;
 
         const table = document.createElement('table');
         table.classList.add('filter');
- //       table.setAttribute('border', '1');
+        //       table.setAttribute('border', '1');
         this.filtElem.appendChild(table);
 
         for (var i = 0; i < columns.length; i++) {
@@ -227,6 +312,7 @@ function FilterElements(datagrid, fe) {
                     input.setAttribute('type', 'number');
 
                     input2 = document.createElement("input");
+                    input2.setAttribute('id', column.dataField + 'Input2');
                     input2.setAttribute('type', 'number');
                     input2.classList.add("inputBase");
                     input2.classList.add("greyBackground");
@@ -237,6 +323,7 @@ function FilterElements(datagrid, fe) {
                 input.setAttribute('type', 'date');
                 if (column.filterType == "between") {
                     input2 = document.createElement("input");
+                    input2.setAttribute('id', column.dataField + 'Input2');
                     input2.classList.add("inputBase");
                     input2.setAttribute('type', 'date');
                     input2.classList.add("greyBackground");
@@ -244,6 +331,7 @@ function FilterElements(datagrid, fe) {
             }
             if (column.filterType && (column.filterType == 'combobox' || column.filterType == 'listbox')) {
                 input = document.createElement("select");
+                input.setAttribute('id', column.dataField + '_' + column.filterType);
                 input.classList.add("greyBackground");
                 input.classList.add("inputBase");
                 for (var f = 0; f < column.avaiableValues.length; f++) {
@@ -298,7 +386,7 @@ function FilterElements(datagrid, fe) {
         td.setAttribute('align', "right");
         function createTableCell(row, el = null, column = null, rowspan = null) {
             var td = document.createElement("td");
-            td.setAttribute('style','padding:2px;');
+            td.setAttribute('style', 'padding:2px;');
             if (el !== null) {
                 try {
                     td.appendChild(el);

@@ -61,8 +61,6 @@
 
     function OnContextMenuItemClick(s, e) {
         if (e.objectType == "header" && e.item.name == 'Copy') {
-
-
             e.handled = true;
             var isKeyFieldRequired = false;
 
@@ -70,7 +68,6 @@
             if (fieldName == 'OrderID') {
                 isKeyFieldRequired = true;
             }
-
             s.GetSelectedFieldValues('OrderID', GetSelectedFieldValuesCallback);
 
 
@@ -80,7 +77,6 @@
                         .then(response => response.json())
                         .then(function (json) {
                             collback(json);
-
                         }
                         );
                 } catch (ex) {
@@ -118,7 +114,6 @@
 
             }
 
-
             function copyToClipboard(str) {
                 const el = document.createElement('textarea');
                 el.value = str;
@@ -139,6 +134,8 @@
     <tr>
         <td>
             <div id="filter" />
+            <button onclick="ReadFilter()">ReadFilter</button>
+            <button onclick="SaveFilter()">SaveFilter</button>
         </td>
     </tr>
 
@@ -176,8 +173,15 @@
     var filter = new FilterElements(GridView, filerElem);
     filter.CreateFilter(filterDiscr);
     function FilterFind() {
-
-
         filter.FilterFind();
     }
+    function ReadFilter() {
+
+        filter.ReadSettings("SettingName");
+    }
+
+    function SaveFilter() {
+        filter.FilterFind();
+    }
+
 </script>
