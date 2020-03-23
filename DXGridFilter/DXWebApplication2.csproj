@@ -118,12 +118,15 @@
     <Content Include="Content\DateFormat.js" />
     <Content Include="Content\FilterControls.js" />
     <Content Include="Content\filterHelper.js" />
+    <Content Include="Content\FilterItem.js" />
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Tests.html" />
-    <Content Include="tests\FilterT.mosha.js" />
+    <Content Include="tests\FilterControlsTest.mosha.js" />
+    <Content Include="tests\FilterControlsTest.testcafe.js" />
+    <Content Include="tests\FilterTest.mosha.js" />
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>

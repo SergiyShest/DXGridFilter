@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.1.0/mocha.css">
+    <!-- подключаем библиотеку Mocha -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.1.0/mocha.js"></script>
+    <!-- настраиваем Mocha: предстоит BDD-тестирование -->
+    <script>
+        mocha.setup('bdd');
+    </script>
+
+    <!-- подключаем chai -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/2.0.0/chai.js"></script>
+    <!-- в chai есть много всего, выносим assert в глобальную область -->
+    <script>
+        var assert = chai.assert;
+        var expect = chai.expect;
+    </script>
+    <title>Tests</title>
+   <script  src="Content/FilterHelper.js"></script>
+   <script  src="Content/FilterItem.js"></script> 
+   <script src="Content/FilterControls.js"></script>
+
+
+</head>
+<style>
+    .dropbtn {
+    
+      /* padding: 16px;
+      font-size: 16px; */
+      border: none;
+    }
+    
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f1f1f1;
+      /* min-width: 160px; */
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    
+    .dropdown-content a {
+      color: black;
+      /* padding: 12px 16px; */
+      text-decoration: none;
+      display: block;
+    }
+    
+    .dropdown-content a:hover {background-color: #ddd;}
+    
+    .dropdown:hover .dropdown-content {display: block;}
+    
+    .dropdown:hover .dropbtn {background-color: #a9aaa9;}
+    </style>
+
+<body>
+    <div id="mocha"></div>
+
+    <button onclick="run()">runTests</button>
+    <div id="filter" />
+    <div class="dropdown">
+        <button class="dropbtn">Dropdown</button>
+        <div class="dropdown-content">
+          <a href="#" onclick="ReadSetting()" >ReadSettings</a>
+          <a href="#">Link 2</a>
+          <a href="#">Link 3</a>
+        </div>
+      </div>
+
+
+    <!-- <script src="tests/test.js"></script>-->
+    <script src="tests/FilterControlsTest.mosha.js"></script>
+    <!-- запустить тесты! -->
+    <script>
+    var filterDiscr = [
+        { dataField: "OrderID", caption: 'id', dataType: "number", filterType: "", filter: true },
+        { dataField: "ShipName", caption: 'имя', dataType: "string", filterType: "", filter: true },
+        {
+            dataField: "CustomerID",
+            caption: 'CustomerID',
+            dataType: "string",
+            filterType: "combobox",
+            filter: true,
+            avaiableValues: ["VINET", "TOMSP", "HANAR", "VICTE"]
+        },
+        {
+            dataField: "CustomerID",
+            caption: 'CustomerID',
+            dataType: "string",
+            filterType: "listbox",
+            filter: true,
+            avaiableValues: ["VINET", "TOMSP", "HANAR", "VICTE"]
+        },
+        { dataField: "Freight", caption: 'цена', dataType: "number", filterType: "between", filter: true },
+        { dataField: "OrderDate", caption: 'дата', dataType: "date", filterType: "between", filter: true }
+    ];
+
+
+         window.onload = function() {
+             
+            
+            run();}
+        var filerObj;
+        function run() {
+            filerElem = document.getElementById("filter");
+            filerObj = new FilterElements(null, filerElem);
+            filerObj.CreateFilter( filterDiscr);
+            mocha.run();
+        }
+        function  FilterFind()
+        {
+            filerObj.SaveSettings("test");
+        }
+
+        function  ReadSetting()
+        {
+            filerObj.ReadSettings("test");
+        }
+
+    </script>
+
+</body>
+
+</html>

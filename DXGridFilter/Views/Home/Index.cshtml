@@ -19,45 +19,11 @@
        
     }
 </style>
+<script src="@Url.Content("../Content/FilterItem.js")" type="text/javascript"></script>
 <script src="@Url.Content("../Content/FilterControls.js")" type="text/javascript"></script>
 <script src="@Url.Content("../Content/FilterHelper.js")" type="text/javascript"></script>
 <script src="@Url.Content("../Content/DateFormat.js")" type="text/javascript"></script>
 <script type="text/javascript">
-
-    var filterDiscr = [
-        { dataField: "OrderID", caption: 'id', dataType: "number", filterType: "", filter: true },
-        { dataField: "ShipName", caption: 'имя', dataType: "string", filterType: "", filter: true },
-        {
-            dataField: "CustomerID",
-            caption: 'CustomerID',
-            dataType: "string",
-            filterType: "combobox",
-            filter: true,
-            avaiableValues: ["VINET", "TOMSP", "HANAR", "VICTE"]
-        },
-        {
-            dataField: "CustomerID",
-            caption: 'CustomerID',
-            dataType: "string",
-            filterType: "listbox",
-            filter: true,
-            avaiableValues: ["VINET", "TOMSP", "HANAR", "VICTE"]
-        },
-        { dataField: "Freight", caption: 'цена', dataType: "number", filterType: "between", filter: true },
-        { dataField: "OrderDate", caption: 'дата', dataType: "date", filterType: "between", filter: true }
-    ];
-
-    function OnClick(s, e) {
-        ASPx.GVShowFilterControl(GridView);
-        if (GridView.cpFilterExpression)
-            $('#filterStr').val(GridView.cpFilterExpression);
-        lbFilters.AddItem(GridView.cpFilterExpression);
-    }
-
-    function OnSelectedIndexChanged(s, e) {
-
-        GridView.PerformCallback({ filterExpression: $('#filterStr').val() });
-    }
 
     function OnContextMenuItemClick(s, e) {
         if (e.objectType == "header" && e.item.name == 'Copy') {
@@ -85,7 +51,6 @@
             }
 
             function GetSelectedFieldValuesCallback(values) {
-
                 var res = '';
                 for (var i = 0; i < values.length; i++) {
                     if (res.length > 0) res += ',';
@@ -105,13 +70,11 @@
                         copyToClipboard(res);
                     });
 
-
                 } else {
 
                     copyToClipboard(res);
                 }
                 //;
-
             }
 
             function copyToClipboard(str) {
@@ -124,6 +87,7 @@
             }
         }
     }
+
 </script>
 <table>
     <tr>
@@ -133,34 +97,108 @@
     </tr>
     <tr>
         <td>
-            <div id="filter" />
-            <button onclick="ReadFilter()">ReadFilter</button>
-            <button onclick="SaveFilter()">SaveFilter</button>
-        </td>
-    </tr>
+            <table class="filter">
+                <tr class="border_bottom">
+                    <td>id</td>
+                    <td><input type="checkbox" id="OrderIDCheckbox"></td>
+                    <td>
+                        <input class="inputBase greyBackground" id="OrderIDInput"
+                               onkeydown="return OnlyNumberAndCommas(this, event)" style="width: 98%">
+                    </td>
+                </tr>
+                <tr class="border_bottom">
+                    <td>имя</td>
+                    <td><input type="checkbox" id="ShipNameCheckbox"></td>
+                    <td><input class="inputBase greyBackground" id="ShipNameInput" style="width: 98%"></td>
+                </tr>
+                <tr class="border_bottom">
+                    <td>CustomerID</td>
+                    <td><input type="checkbox" id="CustomerIDCheckbox"></td>
+                    <td>
+                        <select id="CustomerID_listbox" class="greyBackground inputBase" multiple
+                                style="width: 99%">
+                            <option>VINET</option>
+                            <option>TOMSP</option>
+                            <option>HANAR</option>
+                            <option>VICTE</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr class="border_bottom">
+                    <td>цена</td>
+                    <td><input type="checkbox" id="FreightCheckbox"></td>
+                    <td>
+                        <div>
+                            от<input class="inputBase greyBackground" id="FreightInput"
+                                     onkeydown="return OnlyNumberAndCommas(this, event)" type="number">до<input id="FreightInput2"
+                                                                                                                type="number" class="inputBase greyBackground">
+                        </div>
+                    </td>
+                </tr>
+                <tr class="border_bottom">
+                    <td>дата</td>
+                    <td><input type="checkbox" id="OrderDateCheckbox"></td>
+                    <td>
+                        <div>
+                            от<input class="inputBase greyBackground" id="OrderDateInput" type="date">до<input id="OrderDateInput2"
+                                                                                                               class="inputBase greyBackground" type="date">
+                        </div>
+                    </td>
+                </tr>
+                <tr class="border_bottom">
+                    <td  colspan="2">дата</td>
+                  
+                    <td>
+                        <div>
+                            <span style="display: inline">
+                                от           <div style="display: inline">
+                                    @Html.DevExpress().DateEdit(settings =>
+                                    {
+                                        settings.Name = "fromDateEdit";
 
-    <tr>
-        <td>
-            @Html.DevExpress().Button(settings =>
-            {
-                settings.Name = "btnSave";
-                settings.Text = "Save Current Filter";
-                settings.ClientSideEvents.Click = "OnClick";
-            }).GetHtml()
+                                    }).GetHtml() </div> до      @Html.DevExpress().DateEdit(settings =>
+{
+settings.Name = "toDateEdit";
+
+}).GetHtml()
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="border_bottom">
+                    <td>Проверка</td>
+                    <td><input type="checkbox" id="IsCmokedCheckbox"></td>
+                    <td><input class="inputBase greyBackground" id="IsCmokedInput" style="width: 98%"></td>
+                </tr>
+                <tr class="border_bottom">
+                    <td colspan="3" bgcolor="#FBF0DB">
+                <td colspan="3" bgcolor="#FBF0DB">
+                    @Html.DevExpress().CheckBox(settings =>
+                    {
+                        settings.Name = "IsCmoked_CheckBox";
+                        settings.Text = "проверка чек бокса";
+
+                    }).GetHtml()
+                </td>
+                    
+                </tr>
+                <tr>
+                    <td colspan="3" align="right">
+                        <button onclick="ReadFilter()">ReadFilter</button>
+                        <button onclick="SaveFilter()">SaveFilter</button>
+
+                        <button onclick="FilterFind()"
+                                id="findButton">
+                            Найти
+                        </button>
+                    </td>
+                </tr>
+            </table>
+
         </td>
     </tr>
     <tr>
-        <td>
-            @Html.DevExpress().ListBox(settings =>
-            {
-                settings.Name = "lbFilters";
-                settings.Width = Unit.Pixel(500);
-                settings.Properties.EnableClientSideAPI = true;
-                settings.Properties.ClientSideEvents.SelectedIndexChanged = "OnSelectedIndexChanged";
-            }).GetHtml()
-        </td>
-    </tr>
-    <tr>
+
         <td>
             @Html.Action("GridViewPartial")
         </td>
@@ -168,20 +206,43 @@
 
 </table>
 <script type="text/javascript">
+
+    var filterDiscr = [
+        { dataField: "OrderID", caption: 'id', dataType: "number", filterType: "", filter: true },
+        { dataField: "ShipName", caption: 'имя', dataType: "string", filterType: "", filter: true },
+        {
+            dataField: "CustomerID",
+            caption: 'CustomerID',
+            dataType: "string",
+            filterType: "listbox",
+            filter: true,
+            avaiableValues: ["VINET", "TOMSP", "HANAR", "VICTE"]
+        },
+        { dataField: "Freight", caption: 'цена', dataType: "number", filterType: "between", filter: true },
+        { dataField: "OrderDate", caption: 'дата', dataType: "date", filterType: "between", filter: true }//,
+        // { dataField: "IsCmoked", caption: 'Проверка', dataType: "boolean",  filter: true }
+    ];
+
     // document.onload(() => {
     var filerElem = document.getElementById("filter");
     var filter = new FilterElements(GridView, filerElem);
-    filter.CreateFilter(filterDiscr);
+    //  filter.CreateFilter(filterDiscr);
+    //filter.SetOuterFilter(filterDiscr);
+    filter.AddDevexpressDate(fromDateEdit, toDateEdit, "OrderDate");
+   // filter.AddDevexpressCheckBox(IsCmoked_CheckBox,"IsCmoked");
+
     function FilterFind() {
         filter.FilterFind();
     }
     function ReadFilter() {
-
+        var value=   IsCmoked_CheckBox.GetCheckState()==="Checked";
+        alert(value);
+        IsCmoked_CheckBox.SetCheckState("Checked");
         filter.ReadSettings("SettingName");
     }
 
     function SaveFilter() {
-        filter.FilterFind();
+        filter.SaveSettings("SettingName");
     }
 
 </script>

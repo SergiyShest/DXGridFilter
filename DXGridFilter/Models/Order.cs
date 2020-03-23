@@ -63,6 +63,8 @@ namespace datagrid_mvc5.Models {
 
         [JsonIgnore]
         public virtual Shipper Shipper { get; set; }
+
+        public virtual int IsCmoked { get; set; }
     }
     /// <summary>
     /// Custom Attribute Example

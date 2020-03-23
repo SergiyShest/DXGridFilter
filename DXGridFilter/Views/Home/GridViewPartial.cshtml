@@ -13,7 +13,7 @@
     settings.KeyFieldName = "OrderID";
     settings.CallbackRouteValues = new { Controller = "Home", Action = "GridViewPartial" };
     settings.CustomActionRouteValues = new { Controller = "Home", Action = "GridViewCustomActionPartial" };
- 
+
     settings.Columns.Add(column => {
         column.FieldName = "OrderID";
         column.ReadOnly = true;
@@ -28,6 +28,8 @@
     settings.Columns.Add("EmployeeID");
     settings.Columns.Add("Freight");
     settings.Columns.Add("OrderDate", MVCxGridViewColumnType.DateEdit);
+
+    settings.Columns.Add("IsCmoked");
 
     settings.ClientSideEvents.ContextMenuItemClick = "ContextMenuItemClick";
     settings.Settings.ShowFilterRowMenuLikeItem = true;

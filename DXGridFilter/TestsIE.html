@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.1.0/mocha.css">
+    <!-- подключаем библиотеку Mocha -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/2.1.0/mocha.js"></script>
+    <!-- настраиваем Mocha: предстоит BDD-тестирование -->
+    <script>
+        mocha.setup('bdd');
+    </script>
+
+    <!-- подключаем chai -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chai/2.0.0/chai.js"></script>
+    <!-- в chai есть много всего, выносим assert в глобальную область -->
+    <script>
+        var assert = chai.assert;
+        var expect = chai.expect;
+    </script>
+    <title>Tests</title>
+   <script  src="dist/FilterHelper.js"></script>
+    <script src="dist/FilterControls.js"></script>
+
+
+</head>
+
+
+<body>
+    <div id="mocha"></div>
+    <button onclick="run()">runTests</button>
+
+
+    <!-- <script src="tests/test.js"></script>-->
+    <script src="tests/FilterTest.mosha.js"></script>
+    <!-- запустить тесты! -->
+    <script>
+         window.onload = function() {run();}
+        var filerElem;
+        function run() {
+//            dataGrid = $('#grid').dxDataGrid('instance');
+            filerElem = document.getElementById("filter");
+            filerElem = new FilterElements(null, filerElem);
+            //filerElem.CreateFilter( colunmDescription);
+            mocha.run();
+        }
+    </script>
+
+</body>
+
+</html>

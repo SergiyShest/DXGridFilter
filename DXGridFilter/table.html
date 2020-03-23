@@ -1,0 +1,52 @@
+<table class="filter">
+    <tr class="border_bottom">
+        <td style="padding:2px;">id</td>
+        <td style="padding:2px;"><input type="checkbox" id="OrderIDCheckbox"></td>
+        <td style="padding:2px;"><input class="inputBase greyBackground" id="OrderIDInput"
+                onkeydown="return OnlyNumberAndCommas(this, event)" style="width: 98%"></td>
+    </tr>
+    <tr class="border_bottom">
+        <td style="padding:2px;">имя</td>
+        <td style="padding:2px;"><input type="checkbox" id="ShipNameCheckbox"></td>
+        <td style="padding:2px;"><input class="inputBase greyBackground" id="ShipNameInput" style="width: 98%"></td>
+    </tr>
+    <tr class="border_bottom">
+        <td style="padding:2px;">CustomerID</td>
+        <td style="padding:2px;"><input type="checkbox" id="CustomerIDCheckbox"></td>
+        <td style="padding:2px;"><select id="CustomerID_listbox" class="greyBackground inputBase" multiple="true"
+                style="width: 99%">
+                <option>VINET</option>
+                <option>TOMSP</option>
+                <option>HANAR</option>
+                <option>VICTE</option>
+            </select></td>
+    </tr>
+    <tr class="border_bottom">
+        <td style="padding:2px;">цена</td>
+        <td style="padding:2px;"><input type="checkbox" id="FreightCheckbox"></td>
+        <td style="padding:2px;">
+            <div>от<input class="inputBase greyBackground" id="FreightInput"
+                    onkeydown="return OnlyNumberAndCommas(this, event)" type="number">до<input id="FreightInput2"
+                    type="number" class="inputBase greyBackground"></div>
+        </td>
+    </tr>
+    <tr class="border_bottom">
+        <td style="padding:2px;">дата</td>
+        <td style="padding:2px;"><input type="checkbox" id="OrderDateCheckbox"></td>
+        <td style="padding:2px;">
+            <div>от<input class="inputBase greyBackground" id="OrderDateInput" type="date">до<input id="OrderDateInput2"
+                    class="inputBase greyBackground" type="date"></div>
+        </td>
+    </tr>
+    <tr class="border_bottom">
+        <td style="padding:2px;">Проверка</td>
+        <td style="padding:2px;"><input type="checkbox" id="IsCmokedCheckbox"></td>
+        <td style="padding:2px;"><input class="inputBase greyBackground" id="IsCmokedInput" style="width: 98%"></td>
+    </tr>
+    <tr>
+        <td style="padding:2px;"></td>
+        <td style="padding:2px;"></td>
+        <td style="padding:2px;" align="right"><button onclick="FilterFind()" style="align: right;"
+                id="findButton">Найти</button></td>
+    </tr>
+</table>
