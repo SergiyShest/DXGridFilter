@@ -102,7 +102,7 @@
                     <td>id</td>
                     <td><input type="checkbox" id="OrderIDCheckbox"></td>
                     <td>
-                        <input class="inputBase greyBackground" id="OrderIDInput"
+                        <input  id="OrderIDInput" class="dxeEditArea_Moderno dxeEditAreaSys"
                                onkeydown="return OnlyNumberAndCommas(this, event)" style="width: 98%">
                     </td>
                 </tr>
@@ -115,8 +115,7 @@
                     <td>CustomerID</td>
                     <td><input type="checkbox" id="CustomerIDCheckbox"></td>
                     <td>
-                        <select id="CustomerID_listbox" class="greyBackground inputBase" multiple
-                                style="width: 99%">
+                        <select id="CustomerID_listbox" class="greyBackground inputBase" multiple style="width: 99%">
                             <option>VINET</option>
                             <option>TOMSP</option>
                             <option>HANAR</option>
@@ -146,11 +145,23 @@
                     </td>
                 </tr>
                 <tr class="border_bottom">
+                    <td>ID</td>
+                    <td colspan="2" bgcolor="#FBF0DB">
+                        @Html.DevExpress().TextBox(settings =>
+                        {
+                            settings.Name = "OrderID_Text_Box";
+                         //   settings.Properties.MaskSettings.Mask
+
+                        }).GetHtml()
+                    </td>
+
+                </tr>
+                <tr class="border_bottom">
                     <td  colspan="2">дата</td>
                   
                     <td>
-                        <div>
-                            <span style="display: inline">
+                       
+                          
                                 от           <div style="display: inline">
                                     @Html.DevExpress().DateEdit(settings =>
                                     {
@@ -161,8 +172,8 @@
 settings.Name = "toDateEdit";
 
 }).GetHtml()
-                            </span>
-                        </div>
+                          
+                        
                     </td>
                 </tr>
                 <tr class="border_bottom">
@@ -171,7 +182,7 @@ settings.Name = "toDateEdit";
                     <td><input class="inputBase greyBackground" id="IsCmokedInput" style="width: 98%"></td>
                 </tr>
                 <tr class="border_bottom">
-                    <td colspan="3" bgcolor="#FBF0DB">
+                   
                 <td colspan="3" bgcolor="#FBF0DB">
                     @Html.DevExpress().CheckBox(settings =>
                     {
@@ -207,37 +218,40 @@ settings.Name = "toDateEdit";
 </table>
 <script type="text/javascript">
 
-    var filterDiscr = [
-        { dataField: "OrderID", caption: 'id', dataType: "number", filterType: "", filter: true },
-        { dataField: "ShipName", caption: 'имя', dataType: "string", filterType: "", filter: true },
-        {
-            dataField: "CustomerID",
-            caption: 'CustomerID',
-            dataType: "string",
-            filterType: "listbox",
-            filter: true,
-            avaiableValues: ["VINET", "TOMSP", "HANAR", "VICTE"]
-        },
-        { dataField: "Freight", caption: 'цена', dataType: "number", filterType: "between", filter: true },
-        { dataField: "OrderDate", caption: 'дата', dataType: "date", filterType: "between", filter: true }//,
-        // { dataField: "IsCmoked", caption: 'Проверка', dataType: "boolean",  filter: true }
-    ];
+    //var filterDiscr = [
+    //    { dataField: "OrderID", caption: 'id', dataType: "number", filterType: "", filter: true },
+    //    { dataField: "ShipName", caption: 'имя', dataType: "string", filterType: "", filter: true },
+    //    {
+    //        dataField: "CustomerID",
+    //        caption: 'CustomerID',
+    //        dataType: "string",
+    //        filterType: "listbox",
+    //        filter: true,
+    //        avaiableValues: ["VINET", "TOMSP", "HANAR", "VICTE"]
+    //    },
+    //    { dataField: "Freight", caption: 'цена', dataType: "number", filterType: "between", filter: true },
+    //    { dataField: "OrderDate", caption: 'дата', dataType: "date", filterType: "between", filter: true }//,
+    //    // { dataField: "IsCmoked", caption: 'Проверка', dataType: "boolean",  filter: true }
+    //];
 
     // document.onload(() => {
-    var filerElem = document.getElementById("filter");
-    var filter = new FilterElements(GridView, filerElem);
-    //  filter.CreateFilter(filterDiscr);
-    //filter.SetOuterFilter(filterDiscr);
-    filter.AddDevexpressDate(fromDateEdit, toDateEdit, "OrderDate");
-   // filter.AddDevexpressCheckBox(IsCmoked_CheckBox,"IsCmoked");
+    // var filerElem = document.getElementById("filter");
+    // var filter = new FilterElements(GridView, filerElem);
+    //  filter.CreateFilter(filterDiscr);//Создание фильтра по описанию
+    //filter.SetOuterFilter(filterDiscr);//установка готового фильтра (идентификаторы элементов должны соответствовать автогенеренному фильтру)  
+   
+    var filter = new FilterElements(GridView, null);//Создание пустого фильтра
+    filter.AddDevexpressNumberField(fromDateEdit, toDateEdit, "OrderID_Text_Box");//добавление контрола дата
+    filter.AddDevexpressDate(fromDateEdit, toDateEdit, "OrderDate");//добавление контрола дата
+   // filter.AddDevexpressCheckBox(IsCmoked_CheckBox,"IsCmoked");//добавление контрола чекбокс
 
     function FilterFind() {
         filter.FilterFind();
     }
     function ReadFilter() {
-        var value=   IsCmoked_CheckBox.GetCheckState()==="Checked";
-        alert(value);
-        IsCmoked_CheckBox.SetCheckState("Checked");
+       // var value=   IsCmoked_CheckBox.GetCheckState()==="Checked";
+      //  alert(value);
+      //  IsCmoked_CheckBox.SetCheckState("Checked");
         filter.ReadSettings("SettingName");
     }
 

@@ -157,6 +157,7 @@ var FilterHelper = function () {
 
             filterStr = FilterHelper.RemoveFromExpession(filterStr, fieldName);
 
+            console.log(fieldName);
             if (dataType == "date") {
                 filterStr += addDateCondition(searchedValueFrom, ">=");
                 filterStr += addDateCondition(searchedValueTo, "<=");

@@ -1,243 +1,3 @@
-
-////объект который содержит данные об одном элементе фильтра
-//function FilterField(dataGridColumn, input, input2, checkBox, filterFind) {
-//    this.column = dataGridColumn;
-//    this.Input = input;
-//    this.Input2 = input2;
-//    if (this.Input !== null) {
-//        this.Input.Tag = this;
-//        this.Input.onchange = ValueChanged;
-//        this.Input.onkeyup = ValueChanged;
-//    }
-//    if (this.Input2 !== null) {
-//        this.Input2.onchange = ValueChanged;
-//        this.Input2.Tag = this;
-//    }
-//    this.CheckBox = checkBox;
-//    if (this.CheckBox !== null) {
-//    this.CheckBox.onchange = CheckedChanged;
-//    this.CheckBox.Tag = this;
-//    }
-//    this.ApplayFilter = applayFilter;//function применить фильтр
-//    this.GetSetting = getSetting;//function получить значение фильтра
-//    this.SetSetting = setSetting;//function установить значение фильтра
-//    this.ChangeChecked = ChangeChecked;//function снять галочку
-//    this.FilterFind = filterFind;//function FilterFind colls by press Enter
-
-//    function applayFilter(collectiveFilter) {
-//        var val = '';
-//        if (checkBox==null || checkBox.checked) {
-
-//            val = this.Input.value;   
-
-//            switch (this.column.filterType) {
-//                case "between":
-//                    switch (this.column.dataType) {
-//                        case 'string': { throw "notInplemented"; } break;
-//                        case 'number':
-//                        case 'date':
-//                            {
-//                                if (this.Input2 !== null) {
-//                                    var val2 = this.Input2.value;
-//                                    return FilterHelper.GetFilterBetween(collectiveFilter, this.column.dataField, this.column.dataType, val, val2);
-//                                }
-//                            }
-//                            break;
-//                    }
-
-//                    break;
-//                case "listbox":
-
-//                    val = "";
-//                    for (var i = 0; i < this.Input.selectedOptions.length; i++) {
-//                        if (val.length > 0) val += ',';
-//                        val += this.Input.selectedOptions[i].value;
-//                    }
-
-//                    return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter);
-
-//                    break;
-
-//                default:
-
-//                    switch (this.column.dataType) {
-//                        case 'number':
-//                            {
-//                                return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter);
-//                            }
-//                            break;
-//                        case 'string':
-//                            {
-//                                return FilterHelper.GetFilterContainsFromText(collectiveFilter,
-//                                    this.column.dataField,
-//                                    val,
-//                                    "like");
-//                            }
-//                            break;
-//                        case 'date':
-//                            {
-//                                throw "notInplemented";
-//                            }
-//                            break;
-//                    }
-//            }
-//        }
-//        return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter);
-//    }
-
-//    function setSetting(setting) {
-
-//        this.CheckBox.checked = setting.checkBox;
-//        this.Input.value = setting.value;
-//        if (this.Input2 !== null) {
-//            this.Input2.value = setting.value2;
-//        }
-
-
-//        switch (this.column.filterType) {
-//            case "listbox":
-//                console.log(setting.value);
-//                var arr = setting.value.split(',');
-//                for (var i = 0; i < arr.length; i++) {
-//                    for (var o = 0; o < this.Input.options.length; o++) {
-//                        var option = this.Input.options[o];
-
-//                        if (option.value == arr[i]) {
-//                            option.selected = true;
-//                        }
-//                    }
-//                }
-
-//                break;
-//        }
-//    }
-
-//    function getSetting() {
-
-//        let val = this.Input.value;
-//        let val2 = null;
-//        if (this.Input2 !== null) {
-//            val2 = this.Input2.value;
-//        }
-//        switch (this.column.filterType) {
-//            case "listbox":
-//                val = "";
-//                for (var i = 0; i < this.Input.selectedOptions.length; i++) {
-//                    if (val.length > 0) val += ',';
-//                    val += this.Input.selectedOptions[i].value;
-//                }
-//                break;
-//        }
-//        return { checkBox: this.CheckBox.checked, value: val, value2: val2 };
-
-//    }
-
-
-//    //called from OUTside 
-//    //change CheckBox value depending on the InputBox.value  
-//    function ChangeChecked() {
-
-//        filterField = this;
-
-//        if (filterField.Input.value === "") {
-//            filterField.CheckBox.checked = false;
-
-//        } else {
-//            filterField.CheckBox.checked = true;
-
-
-//        }
-//    }
-
-//    //called from out side 
-//    //change CheckBox value depending on the InputBox.value  
-//    function CheckedChanged() {
-
-//        var filterField = this.Tag;
-
-
-//        if (!filterField.CheckBox.checked) {
-
-//            filterField.Input.classList.add("greyBackground");
-//            if (filterField.Input2 != null) {
-//                filterField.Input2.classList.add("greyBackground");
-//            }
-
-//        } else {
-//            filterField.Input.classList.remove("greyBackground");
-//            if (filterField.Input2 != null) {
-//                filterField.Input2.classList.remove("greyBackground");
-//            }
-
-//        }
-//    }
-//    //called from InputBox 
-//    //change CheckBox value depending on the InputBox.value 
-//    function ValueChanged(e) {
-
-//        if (e.keyCode === 13) {
-//            FilterFind();
-//        }
-
-//        if (this.value === "") {
-//            this.Tag.CheckBox.checked = false;
-//            this.Tag.Input.classList.add("greyBackground");
-//            if (this.Tag.Input2 != null) {
-//                this.Input2.Tag.classList.add("greyBackground");
-//            }
-//        } else {
-//            this.Tag.CheckBox.checked = true;
-//            this.Tag.Input.classList.remove("greyBackground");
-//            if (this.Tag.Input2 != null) {
-//                this.Tag.Input2.classList.remove("greyBackground");
-//            }
-//        }
-//    }
-
-//}
-
-//function DevexpressCheckBoxFilterField(dataGridColumn, checkBox, filterFind) {
-
-//    this.CheckBox = checkBox;
-//    this.ApplayFilter = applayFilter;//function применить фильтр
-//    FilterField.call(this, dataGridColumn, null, null, null, filterFind);
-//function applayFilter(collectiveFilter) {
-//        var value = CheckBox.GetCheckState() === "Checked";
-//        if (value) val = '1';
-                         
-//        return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter);
-//    }
-//}
-
-//DevexpressCheckBoxFilterField.prototype = Object.create(FilterField.prototype);
-////DevexpressCheckBoxFilterField.prototype.ApplayFilter = function (collectiveFilter) {
-////        var value = CheckBox.GetCheckState() === "Checked";
-////        if (value) val = '1';
-                         
-////        return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter);
-////    }
-
-////limits input characters to numbers and commas
-function OnlyNumberAndCommas(element, e) {
-    if (element == null) return;
-    //  console.log(e.keyCode);
-
-
-    if (e.keyCode >= 48 && e.keyCode <= 57) //digits
-    {
-        return true;
-    }
-    if (e.keyCode == 188 || e.keyCode == 190)//dote comma 
-    {
-        return true;
-    }
-    if (e.keyCode == 46 || e.keyCode == 8) //back delete
-    {
-        return true;
-    }
-    return false;
-}
-
 class FilterElements {
 
     constructor (datagrid, fe) {
@@ -480,4 +240,26 @@ class FilterElements {
         this.dataGrid.PerformCallback({ filterExpression: collectiveFilter });;
     }
 
+}
+
+
+//limits input characters to numbers and commas
+function OnlyNumberAndCommas(element, e) {
+    if (element == null) return;
+    //  console.log(e.keyCode);
+
+
+    if (e.keyCode >= 48 && e.keyCode <= 57) //digits
+    {
+        return true;
+    }
+    if (e.keyCode == 188 || e.keyCode == 190)//dote comma 
+    {
+        return true;
+    }
+    if (e.keyCode == 46 || e.keyCode == 8) //back delete
+    {
+        return true;
+    }
+    return false;
 }

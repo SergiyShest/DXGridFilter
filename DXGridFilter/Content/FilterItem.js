@@ -200,14 +200,25 @@ class DevexpressCheckBoxFilterItem extends FilterItem {
         super(dataGridColumn, null, null, null, filterFind);
         this.CheckBox = checkBox;
     }
-  
-ApplayFilter(collectiveFilter) {
-  let val='0';
+
+    ApplayFilter(collectiveFilter) {
+        let val = '';
         var value = this.CheckBox.GetCheckState() === "Checked";
         if (value) val = '1';
 
         return FilterHelper.GetFilterInFromText(this.column.dataField, val, collectiveFilter);
     }
+    GetSetting() {
+        var value = this.CheckBox.GetCheckState() === "Checked";
+        return { checkBox: true, value: value, value2: null };
+    }
+
+
+    SetSetting(setting) {
+
+        this.CheckBox.SetChecked(setting.value);
+    }
+
 }
 
 class DevexpressDateFilterItem extends FilterItem {
@@ -217,50 +228,50 @@ class DevexpressDateFilterItem extends FilterItem {
         this.DateEditForm = dateEditForm;
         this.DateEditTo = dateEditTo;
     }
-  
-  ApplayFilter(collectiveFilter) {
 
-      var value = dateCondition(this.DateEditForm.GetDate());
-    
-      var value2 = dateCondition(this.DateEditTo.GetDate());
+    ApplayFilter(collectiveFilter) {
+
+        var value = dateCondition(this.DateEditForm.GetDate());
+
+        var value2 = dateCondition(this.DateEditTo.GetDate());
 
 
 
-      return FilterHelper.GetFilterBetween(collectiveFilter, this.column.dataField, this.column.dataType, value, value2);
+        return FilterHelper.GetFilterBetween(collectiveFilter, this.column.dataField, this.column.dataType, value, value2);
 
-      function dateCondition(searchedDate) {
-          if (searchedDate!=null  ) {
-              return dateFormat(searchedDate, "yyyy-mm-dd");
-          } else return "";
-      }
+        function dateCondition(searchedDate) {
+            if (searchedDate != null) {
+                return dateFormat(searchedDate, "yyyy-mm-dd");
+            } else return "";
+        }
     }
 
-  GetSetting() {
+    GetSetting() {
 
-      var value = dateCondition(this.DateEditForm.GetDate());
+        var value = dateCondition(this.DateEditForm.GetDate());
 
-      var value2 = dateCondition(this.DateEditTo.GetDate());
-
-
-      return { checkBox: true, value: value, value2: value2 };
-    
-
-      function dateCondition(searchedDate) {
-          if (searchedDate != null) {
-              return dateFormat(searchedDate, "yyyy-mm-dd");
-          } else return "";
-      }
+        var value2 = dateCondition(this.DateEditTo.GetDate());
 
 
-  }
+        return { checkBox: true, value: value, value2: value2 };
 
 
-  SetSetting(setting) {
+        function dateCondition(searchedDate) {
+            if (searchedDate != null) {
+                return dateFormat(searchedDate, "yyyy-mm-dd");
+            } else return "";
+        }
 
-      let d = new Date(setting.value);
-      this.DateEditForm.SetDate(d);
-      let d2 = new Date(setting.value2);
-      this.DateEditTo.SetDate(d2);
-  }
+
+    }
+
+
+    SetSetting(setting) {
+
+        let d = new Date(setting.value);
+        this.DateEditForm.SetDate(d);
+        let d2 = new Date(setting.value2);
+        this.DateEditTo.SetDate(d2);
+    }
 
 }
