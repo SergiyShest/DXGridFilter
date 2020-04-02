@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-16"?>
+<ArrayOfExtraPayRequest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ExtraPayRequest xsi:type="ForeignCurrencyPayRequest">
+    <DocNum>3</DocNum>
+    <DocDate>2020-03-27T00:00:00</DocDate>
+    <ChargeSum>180.00</ChargeSum>
+    <CurrencyCode>978</CurrencyCode>
+    <CurrencyRate xsi:nil="true" />
+    <MultiCurrency>false</MultiCurrency>
+    <TransferSum xsi:nil="true" />
+    <SenderIdFromNsi>100382</SenderIdFromNsi>
+    <SenderBankIdFromNsi>80755</SenderBankIdFromNsi>
+    <SenderAccountNum>40702978200060000386</SenderAccountNum>
+    <SenderCountryCode>643</SenderCountryCode>
+    <SenderBankCountryCode>643</SenderBankCountryCode>
+    <ReceiverIdFromNsi>3331674</ReceiverIdFromNsi>
+    <ReceiverBankIdFromNsi>81150</ReceiverBankIdFromNsi>
+    <ReceiverAccountNum>DE84700000000070001054</ReceiverAccountNum>
+    <MediatorBankIdFromNsi xsi:nil="true" />
+    <PayPurpose>For the 7th year of the patent  file number of the DPMA (starting with 60 2014 060 510.9)NO VAT</PayPurpose>
+    <ResponsiblePerson>Vdovyak L M</ResponsiblePerson>
+    <ResponsiblePersonPhone>83452320498</ResponsiblePersonPhone>
+    <Urgency>false</Urgency>
+    <TypeOfService xsi:nil="true" />
+    <CommissionBankIdFromNsi xsi:nil="true" />
+    <ExtraCommissionBankIdFromNsi xsi:nil="true" />
+    <CommissionType>OUR</CommissionType>
+    <SourceId>3_59391220091211429</SourceId>
+    <SystemId>11</SystemId>
+    <TechnicalData>DataSource=&gt;Portal</TechnicalData>
+    <CurrencyOperation>
+      <CurrencyOperation>
+        <Kind>70205</Kind>
+        <Amount>180.0000</Amount>
+        <Currency>EUR</Currency>
+      </CurrencyOperation>
+    </CurrencyOperation>
+    <BasisDocument>
+      <BasisDocument>
+        <Type>Иной документ</Type>
+        <Num>602014060510.9</Num>
+        <Date xsi:nil="true" />
+      </BasisDocument>
+    </BasisDocument>
+    <Analitics>
+      <Analitics>
+        <AnalyticClassifier>05.06.1780.99</AnalyticClassifier>
+        <Amount>180.0000</Amount>
+      </Analitics>
+    </Analitics>
+  </ExtraPayRequest>
+</ArrayOfExtraPayRequest>

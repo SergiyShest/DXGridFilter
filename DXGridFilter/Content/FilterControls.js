@@ -22,6 +22,17 @@ class FilterElements {
 
         this.FilterElementsArray.push(field);
     }
+
+
+    AddDevexpressRadioButtons(radioButton,  dataField) {
+        var column = { dataField: dataField, dataType: "number"}
+        var field = new DevexpressRadioButtonsFilterItem(column, radioButton, FilterFind);
+
+        this.FilterElementsArray.push(field);
+    }
+
+
+
     SaveSettings(settingName) {
         var settings = [];
         for (var i = 0; i < this.FilterElementsArray.length; i++) {

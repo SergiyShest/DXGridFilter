@@ -1,4 +1,6 @@
-﻿class FilterItem {
+﻿
+//используется в фильтре для обычных HTML контролоы
+class FilterItem {
 
     constructor(dataGridColumn, input, input2, checkBox, filterFind) {
         this.column = dataGridColumn;
@@ -194,6 +196,30 @@
 
 }
 
+
+class DevexpressRadioButtonsFilterItem extends FilterItem {
+
+    constructor(dataGridColumn, radioButtons, filterFind) {
+        super(dataGridColumn, null, null, null, filterFind);
+        this.Input = radioButtons;
+    }
+
+    ApplayFilter(collectiveFilter) {
+
+        var value = this.Input.GetValue();
+        return FilterHelper.GetFilterInFromText(this.column.dataField, value, collectiveFilter);
+    }
+    GetSetting() {
+        var value = this.Input.GetValue();;
+        return { checkBox: true, value: value, value2: null };
+    }
+
+    SetSetting(setting) {
+        this.Input.SetValue(setting.value);
+    }
+
+}
+
 class DevexpressCheckBoxFilterItem extends FilterItem {
 
     constructor(dataGridColumn, checkBox, filterFind) {
@@ -213,9 +239,7 @@ class DevexpressCheckBoxFilterItem extends FilterItem {
         return { checkBox: true, value: value, value2: null };
     }
 
-
     SetSetting(setting) {
-
         this.CheckBox.SetChecked(setting.value);
     }
 
@@ -262,16 +286,29 @@ class DevexpressDateFilterItem extends FilterItem {
             } else return "";
         }
 
-
     }
 
 
     SetSetting(setting) {
+        let d = null;
+        let d2 = null;
+        if (setting.value !== '') {
+            d = new Date(setting.value);
+            this.DateEditForm.SetDate(d);
+        }
+        else {
+            this.DateEditForm.SetDate(null);
+        }
 
-        let d = new Date(setting.value);
-        this.DateEditForm.SetDate(d);
-        let d2 = new Date(setting.value2);
-        this.DateEditTo.SetDate(d2);
+        if (setting.value2 !== '') {
+            d2 = new Date(setting.value2);
+            this.DateEditTo.SetDate(d2);
+        }
+        else {
+            this.DateEditTo.SetDate(null);
+        }
+
+
     }
 
 }

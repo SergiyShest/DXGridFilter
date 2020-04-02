@@ -30,6 +30,14 @@ var FilterElements = function () {
             this.FilterElementsArray.push(field);
         }
     }, {
+        key: "AddDevexpressRadioButtons",
+        value: function AddDevexpressRadioButtons(radioButton, dataField) {
+            var column = { dataField: dataField, dataType: "number" };
+            var field = new DevexpressRadioButtonsFilterItem(column, radioButton, FilterFind);
+
+            this.FilterElementsArray.push(field);
+        }
+    }, {
         key: "SaveSettings",
         value: function SaveSettings(settingName) {
             var settings = [];

@@ -109,7 +109,7 @@ var FilterHelper = function () {
 
             if (filterText.length > 0) {
                 var valueAr = filterText.split(',');
-                filterStr = FilterHelper.ApplyInCon(filterStr, fieldName, valueAr);
+                filterStr = FilterHelper.ApplyInCon(filterStr, fieldName, valueAr, "");
             } else {
                 filterStr = FilterHelper.RemoveFromExpession(filterStr, fieldName);
             }

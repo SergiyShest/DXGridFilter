@@ -8,6 +8,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+//используется в фильтре для обычных HTML контролоы
 var FilterItem = function () {
     function FilterItem(dataGridColumn, input, input2, checkBox, filterFind) {
         _classCallCheck(this, FilterItem);
@@ -210,16 +211,51 @@ var FilterItem = function () {
     return FilterItem;
 }();
 
-var DevexpressCheckBoxFilterItem = function (_FilterItem) {
-    _inherits(DevexpressCheckBoxFilterItem, _FilterItem);
+var DevexpressRadioButtonsFilterItem = function (_FilterItem) {
+    _inherits(DevexpressRadioButtonsFilterItem, _FilterItem);
+
+    function DevexpressRadioButtonsFilterItem(dataGridColumn, radioButtons, filterFind) {
+        _classCallCheck(this, DevexpressRadioButtonsFilterItem);
+
+        var _this = _possibleConstructorReturn(this, (DevexpressRadioButtonsFilterItem.__proto__ || Object.getPrototypeOf(DevexpressRadioButtonsFilterItem)).call(this, dataGridColumn, null, null, null, filterFind));
+
+        _this.Input = radioButtons;
+        return _this;
+    }
+
+    _createClass(DevexpressRadioButtonsFilterItem, [{
+        key: 'ApplayFilter',
+        value: function ApplayFilter(collectiveFilter) {
+
+            var value = this.Input.GetValue();
+            return FilterHelper.GetFilterInFromText(this.column.dataField, value, collectiveFilter);
+        }
+    }, {
+        key: 'GetSetting',
+        value: function GetSetting() {
+            var value = this.Input.GetValue();;
+            return { checkBox: true, value: value, value2: null };
+        }
+    }, {
+        key: 'SetSetting',
+        value: function SetSetting(setting) {
+            this.Input.SetValue(setting.value);
+        }
+    }]);
+
+    return DevexpressRadioButtonsFilterItem;
+}(FilterItem);
+
+var DevexpressCheckBoxFilterItem = function (_FilterItem2) {
+    _inherits(DevexpressCheckBoxFilterItem, _FilterItem2);
 
     function DevexpressCheckBoxFilterItem(dataGridColumn, checkBox, filterFind) {
         _classCallCheck(this, DevexpressCheckBoxFilterItem);
 
-        var _this = _possibleConstructorReturn(this, (DevexpressCheckBoxFilterItem.__proto__ || Object.getPrototypeOf(DevexpressCheckBoxFilterItem)).call(this, dataGridColumn, null, null, null, filterFind));
+        var _this2 = _possibleConstructorReturn(this, (DevexpressCheckBoxFilterItem.__proto__ || Object.getPrototypeOf(DevexpressCheckBoxFilterItem)).call(this, dataGridColumn, null, null, null, filterFind));
 
-        _this.CheckBox = checkBox;
-        return _this;
+        _this2.CheckBox = checkBox;
+        return _this2;
     }
 
     _createClass(DevexpressCheckBoxFilterItem, [{
@@ -240,7 +276,6 @@ var DevexpressCheckBoxFilterItem = function (_FilterItem) {
     }, {
         key: 'SetSetting',
         value: function SetSetting(setting) {
-
             this.CheckBox.SetChecked(setting.value);
         }
     }]);
@@ -248,17 +283,17 @@ var DevexpressCheckBoxFilterItem = function (_FilterItem) {
     return DevexpressCheckBoxFilterItem;
 }(FilterItem);
 
-var DevexpressDateFilterItem = function (_FilterItem2) {
-    _inherits(DevexpressDateFilterItem, _FilterItem2);
+var DevexpressDateFilterItem = function (_FilterItem3) {
+    _inherits(DevexpressDateFilterItem, _FilterItem3);
 
     function DevexpressDateFilterItem(dataGridColumn, dateEditForm, dateEditTo, filterFind) {
         _classCallCheck(this, DevexpressDateFilterItem);
 
-        var _this2 = _possibleConstructorReturn(this, (DevexpressDateFilterItem.__proto__ || Object.getPrototypeOf(DevexpressDateFilterItem)).call(this, dataGridColumn, null, null, null, filterFind));
+        var _this3 = _possibleConstructorReturn(this, (DevexpressDateFilterItem.__proto__ || Object.getPrototypeOf(DevexpressDateFilterItem)).call(this, dataGridColumn, null, null, null, filterFind));
 
-        _this2.DateEditForm = dateEditForm;
-        _this2.DateEditTo = dateEditTo;
-        return _this2;
+        _this3.DateEditForm = dateEditForm;
+        _this3.DateEditTo = dateEditTo;
+        return _this3;
     }
 
     _createClass(DevexpressDateFilterItem, [{
@@ -296,11 +331,21 @@ var DevexpressDateFilterItem = function (_FilterItem2) {
     }, {
         key: 'SetSetting',
         value: function SetSetting(setting) {
+            var d = null;
+            var d2 = null;
+            if (setting.value !== '') {
+                d = new Date(setting.value);
+                this.DateEditForm.SetDate(d);
+            } else {
+                this.DateEditForm.SetDate(null);
+            }
 
-            var d = new Date(setting.value);
-            this.DateEditForm.SetDate(d);
-            var d2 = new Date(setting.value2);
-            this.DateEditTo.SetDate(d2);
+            if (setting.value2 !== '') {
+                d2 = new Date(setting.value2);
+                this.DateEditTo.SetDate(d2);
+            } else {
+                this.DateEditTo.SetDate(null);
+            }
         }
     }]);
 
